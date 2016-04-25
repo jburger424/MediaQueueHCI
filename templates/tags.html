@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}MegsArtist{% endblock %}
+
+{% block page_content %}
+    <div class="page-header">
+        <div class="row text-center form-tabs">
+            <div class="col-md-2 col-md-offset-4"><a id="form_link" href="/artists/">Artists</a></div>
+            <div class="active col-md-2"><a id="form_link" href="/tags/">Tags</a></div>
+        </div>
+    </div>
+    <div class="jumbotron">
+        <div class="row">
+            {% for tagName in tagNames|sort %}
+                {%  if tagName|length > 0 %}
+                <a class="token-link" href="/tags/{{ tagName }}"> {{ tagName }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}

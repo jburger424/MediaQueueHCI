@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block title %}Media Queue{% endblock %}
+
+{% block page_content %}
+
+    <div class="page-header">
+                    <br>Users<br>
+                    {% for user in users %}
+                        <a href="/artists/{{ user.name }}">
+                            <li>{{ user.name }}</li>
+                        </a>
+                    {% endfor %}
+                    <br>Playables<br>
+                    {% for playable in playables %}
+                            <li>{{ playable.url }}</li>
+                        </a>
+                    {% endfor %}
+    </div>
+    <div class="col-lg-6">
+    <div class="add-link input-group">
+      <input type="text" class="form-control" placeholder="Add Youtube URL">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button">+</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-6 -->
+{% endblock %}
