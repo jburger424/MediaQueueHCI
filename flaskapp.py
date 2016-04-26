@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 from random import randint
 import uuid
 from flask import Flask, render_template, send_from_directory, flash, json, Response, request, redirect, url_for, \
@@ -118,11 +119,14 @@ class Tag(db.Model):
 
 
 # START
+
+
 class User(UserMixin, db.Model):
     # __tablename__ = 'artist'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
+    time_updated = db.Column(db.DateTime())
     is_player = 0
 
     def __repr__(self):
@@ -162,9 +166,13 @@ class Playable(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer(), unique=False)
+    time_added = db.Column(db.DateTime())
 
     def __repr__(self):
         return '<Playable %r>' % self.url
+    def get_dict(self):
+        dict = {'URL': self.url, 'Score': self.score}
+        return dict
 
 
 class NicknameForm(Form):
@@ -251,7 +259,8 @@ def new_session():
                 break
         session = Session(hex_key=session_hex)
         user = User(name=nicknameForm.name.data,
-                    session=session)
+                    session=session,
+                    time_updated = datetime.utcnow())
         db.session.add(session)
         db.session.add(user)
         db.session.commit()
@@ -274,30 +283,27 @@ def addPlayable():
     playable = Playable(url=newPlayable,
                         session_id = session.id,
                         added_by_id = current_user.id,
-                        score = 0)
+                        score = 0
+                        )
+    playable.time_added = datetime.utcnow()
+    print(playable.time_added)
     db.session.add(playable)
     db.session.commit()
     newPlayableID = Playable.query.filter_by(url=newPlayable).first().id
     # send back success message to js with new tag ID
     return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
 
-@app.route('/session/add', methods=['GET'])
-def addPlayable():
-    jsonData = request.json
-    print(current_user.name)
-    hex_key = current_user.session.hex_key
-    session = Session.query.filter_by(hex_key=hex_key).first()
-    newPlayable = jsonData.get('newPlayable')
-    print(newPlayable)
-    playable = Playable(url=newPlayable,
-                        session_id = session.id,
-                        added_by_id = current_user.id,
-                        score = 0)
-    db.session.add(playable)
-    db.session.commit()
-    newPlayableID = Playable.query.filter_by(url=newPlayable).first().id
-    # send back success message to js with new tag ID
-    return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
+@app.route('/session/update/', methods=['GET'])
+#should recieve time last updated (from here) and return playable added since then, can maybe get from current user
+def getUpdate():
+    
+    playables=Playable.query.filter(
+        current_user.session_id == Playable.session_id,
+        current_user.time_updated < Playable.time_added
+    )
+    print("Updated: ",current_user.time_updated)
+    current_user.time_updated = datetime.utcnow()
+    return Response(json.dumps([playable.get_dict() for playable in playables]), mimetype='application/json')
 
 '''
 ##todo, check that email is unique
