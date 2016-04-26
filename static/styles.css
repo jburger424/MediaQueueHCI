@@ -22,7 +22,9 @@ ul b {
     /* cursor: -webkit-zoom-in; */
     /* cursor: zoom-in; */
 }
-
+.session_info ul li.active {
+    background: #ff0000;
+}
 .session_info ul li:hover {
     background: rgb(226, 226, 145);
 }

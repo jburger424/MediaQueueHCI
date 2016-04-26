@@ -76,9 +76,11 @@ function findBootstrapEnvironment() {
         }
     }
 }
+//reordering animation http://zurb.com/forrst/posts/Animated_list_item_reordering_in_jQuery-RR1
 if (findBootstrapEnvironment() == "lg") {
     $("#playables").on('click', 'li', function () {
         //alert($(this).text());
+        $(this).addClass("active");
         player.loadVideoById({
             'videoId': $(this).text(),
             'suggestedQuality': 'large'
@@ -93,7 +95,7 @@ if (findBootstrapEnvironment() == "lg") {
         player = new YT.Player('player', {
             height: vHeight,
             width: vWidth,
-            videoId: 'M7lc1UVf-VE',
+            videoId: 'Cy-sNutGsqg',
             events: {
                 'onReady': onPlayerReady,
                 'onStateChange': onPlayerStateChange
@@ -112,14 +114,24 @@ if (findBootstrapEnvironment() == "lg") {
     var done = false;
 
     function onPlayerStateChange(event) {
-        /*if (event.data == YT.PlayerState.PLAYING && !done) {
-            setTimeout(stopVideo, 6000);
-            done = true;
-        }*/
+        if(event['data'] == 0){
+            console.log("video_ended");
+            goToNext();
+        }
     }
 
     function stopVideo() {
         player.stopVideo();
+    }
+
+    //start queue code
+    function goToNext() {
+        $("#playables li:first").remove();
+        $("#playables li:first").addClass("active");
+        player.loadVideoById({
+            'videoId': $("#playables li:first").text(),
+            'suggestedQuality': 'large'
+        });
     }
 }
 
