@@ -1,4 +1,5 @@
 import os
+import sys
 from datetime import datetime
 from random import randint
 import uuid
@@ -223,24 +224,27 @@ def join_session():
 @app.route('/session/<url_hex_key>', methods=['GET','POST'])
 def join_session(url_hex_key):
     joinForm = NicknameForm()
-    if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
-                    session = Session.query.filter_by(hex_key=url_hex_key).first()
-                    users = User.query.filter_by(session_id=session.id).all()
-                    return render_template('session_intro.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
-    if joinForm.validate_on_submit():
-        name = joinForm.name.data
-        session = Session.query.filter_by(hex_key=url_hex_key).first()
-        if session is None:
+    session = Session.query.filter_by(hex_key=url_hex_key).first()
+    if session is None:
             print("session is none")
             message = "Error: The session '" + url_hex_key + "' does not exist. Please <a href='/'>create a session</a> or do **something else."
             flash(message, "error")  # TODO
             return render_template('create_session.html', nicknameForm=joinForm)
-        else:
-            user = User(name=name,
-                        session=session)
-            db.session.add(user)
-            db.session.commit()
-            login_user(user)
+
+    users = User.query.filter_by(session_id=session.id).all()
+
+    #could reduce this logic
+    if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
+                    return render_template('session_intro.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
+    if joinForm.validate_on_submit():
+        name = joinForm.name.data
+        session = Session.query.filter_by(hex_key=url_hex_key).first()
+        user = User(name=name,
+                    session=session)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return render_template('session_intro.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
 
     return render_template('create_session.html', nicknameForm=joinForm)
 
@@ -296,11 +300,16 @@ def addPlayable():
 @app.route('/session/update/', methods=['GET'])
 #should recieve time last updated (from here) and return playable added since then, can maybe get from current user
 def getUpdate():
-    
-    playables=Playable.query.filter(
-        current_user.session_id == Playable.session_id,
-        current_user.time_updated < Playable.time_added
-    )
+    playables = []
+    try:
+        playables=Playable.query.filter(
+            current_user.session_id == Playable.session_id,
+            current_user.time_updated < Playable.time_added
+        )
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
+        #raise
+
     print("Updated: ",current_user.time_updated)
     current_user.time_updated = datetime.utcnow()
     return Response(json.dumps([playable.get_dict() for playable in playables]), mimetype='application/json')

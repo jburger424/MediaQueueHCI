@@ -1,5 +1,6 @@
 jQuery(function ($) { // First argument is the jQuery object
-    $(".add-link button").click(function () {
+    $('#url_form').submit(function(event){
+        event.preventDefault();
         var url = $('.add-link .form-control').val();
         //TODO figure out how to do added by
 
@@ -14,6 +15,7 @@ jQuery(function ($) { // First argument is the jQuery object
             },
             dataType: "json"
         });
+        update();
         /*$.ajax({
          url: '/session/585/add',
          data: $('form').serialize(),
@@ -26,9 +28,8 @@ jQuery(function ($) { // First argument is the jQuery object
          }
          });*/
     });
-    //update every second
-    setInterval(function () {
-        $.ajax({
+    function update(){
+                $.ajax({
             type: "GET",
             url: "/session/update/",
             dataType: "json", // Set the data type so jQuery can parse it for you
@@ -40,6 +41,10 @@ jQuery(function ($) { // First argument is the jQuery object
                 }
             }
         });
+    }
+    //update every second
+    setInterval(function () {
+        update();
     }, 1000);
 });
 
