@@ -18,18 +18,24 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
-        $(".add-link input.form-control").val("")
-        /*$.ajax({
-         url: '/session/585/add',
-         data: $('form').serialize(),
-         type: 'POST',
-         success: function (response) {
-         console.log(response);
-         },
-         error: function (error) {
-         console.log(error);
-         }
-         });*/
+        $(".add-link input.form-control").val("");
+    });
+    $('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
+        var url = $(this).siblings(".title").first().text()
+        var voteVal = $(this).hasClass("upvote")?1:-1;
+
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "/session/vote",
+            data: JSON.stringify({url: url, vote: voteVal}),
+            success: function (data) {
+                //console.log(data.title);
+                //console.log(data.article);
+            },
+            dataType: "json"
+        });
+        update();
     });
     function update() {
         $.ajax({
@@ -39,11 +45,17 @@ jQuery(function ($) { // First argument is the jQuery object
             success: function (data) {
                 var users = data['users'];
                 var playables = data['playables'];
-                console.log(users);
-                console.log(playables);
+                //console.log(users);
+                //console.log(playables);
                 for (var i in playables) {
-                    $("#playables").append("<li>" + playables[i]['URL'] + "</li>");
-                    console.log("Adding: " + playables[i]['URL']);
+                    $("#playables").append("<li class='list-group-item'>"+
+                        "<span class='upvote'>&#x25B2;</span>"+
+                        "<span class='downvote'>&#x25BC;</span>"+
+                            "<span class='title'>"+playables[i]['URL']+"</span>"+
+                            "<span class='label label-default label-pill pull-xs-right'>"+(playables[i]['Score']).toString()+"</span>"+
+                        "</li>"
+                    );
+                    console.log("Adding: " + playables[i]['URL'] + "with score" + playables[i]['Score']);
                 }
                 for (var j in users) {
                     $("#users").append("<li>" + users[j]['Name'] + "</li>");
@@ -82,7 +94,7 @@ if (findBootstrapEnvironment() == "lg") {
         //alert($(this).text());
         $(this).addClass("active");
         player.loadVideoById({
-            'videoId': $(this).text(),
+            'videoId': $(this).children(".title").text(),
             'suggestedQuality': 'large'
         });
 
@@ -95,7 +107,7 @@ if (findBootstrapEnvironment() == "lg") {
         player = new YT.Player('player', {
             height: vHeight,
             width: vWidth,
-            videoId: 'Cy-sNutGsqg',
+            videoId: 'g4mHPeMGTJM',
             events: {
                 'onReady': onPlayerReady,
                 'onStateChange': onPlayerStateChange

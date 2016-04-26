@@ -173,7 +173,7 @@ class Playable(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer(), unique=False)
-    time_added = db.Column(db.DateTime())
+    time_modified = db.Column(db.DateTime())
 
     def __repr__(self):
         return '<Playable %r>' % self.url
@@ -301,8 +301,8 @@ def addPlayable():
                         added_by_id = current_user.id,
                         score = 0
                         )
-    playable.time_added = datetime.utcnow()
-    print(playable.time_added)
+    playable.time_modified = datetime.utcnow()
+    print(playable.time_modified)
     db.session.add(playable)
     db.session.commit()
     newPlayableID = Playable.query.filter_by(url=newPlayable).first().id
@@ -317,7 +317,7 @@ def getUpdate():
     try:
         playables=Playable.query.filter(
             current_user.session_id == Playable.session_id,
-            current_user.time_updated < Playable.time_added
+            current_user.time_updated < Playable.time_modified
         )
     except:
         print("Unexpected Playable error:", sys.exc_info()[0])
@@ -336,6 +336,22 @@ def getUpdate():
     print(users)
 
     return Response(json.dumps(dict), mimetype='application/json')
+
+@app.route('/session/vote', methods=['POST'])
+def vote():
+    jsonData = request.json
+    url = jsonData.get('url')
+    vote = jsonData.get('vote')
+    playable = Playable.query.filter(
+            current_user.session_id == Playable.session_id,
+            Playable.url == url
+    ).first()
+    print("Old Score: "+str(playable.score))
+    playable.score += vote
+    print("New Score: "+ str(playable.score))
+    playable.time_modified = datetime.utcnow()
+    # send back success message to js with new tag ID
+    return json.dumps({'success': True, 'new_score': playable.score}), 200, {'ContentType': 'application/json'}
 
 '''
 ##todo, check that email is unique

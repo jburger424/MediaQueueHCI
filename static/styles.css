@@ -1,3 +1,26 @@
+.no-gutter > [class*='col-'] {
+    padding-right:0;
+    padding-left:0;
+}
+li.active:after {
+        content: '\25BA';
+}
+
+span.downvote {
+    color: #FF8F8F;
+}
+
+span.upvote {
+    color: #87C583;
+}
+
+span.upvote:hover {
+    color: green;
+}
+
+span.downvote:hover {
+    color: red;
+}
 
 #url_form button.btn.btn-default {
     background: #36B120;
@@ -65,9 +88,7 @@ audio{
     list-style-type: none;
   cursor: pointer;
 }
-li.active:before {
-        content: '\25BA';
-}
+
 
 /*Lauren's*/
 .navbar-default {

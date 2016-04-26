@@ -15,35 +15,48 @@
       </span>
             </div><!-- /input-group -->
         </form>
-    <div id="player"></div>
+        <div id="player"></div>
         <script>
-      // 2. This code loads the IFrame Player API code asynchronously.
-      var tag = document.createElement('script');
+            // 2. This code loads the IFrame Player API code asynchronously.
+            var tag = document.createElement('script');
 
-      tag.src = "https://www.youtube.com/iframe_api";
-      var firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-      // 3. This function creates an <iframe> (and YouTube player)
-      //    after the API code downloads.
+            // 3. This function creates an <iframe> (and YouTube player)
+            //    after the API code downloads.
 
-    </script>
-    <!--TODO take this out of the html file-->
+        </script>
+        <!--TODO take this out of the html file-->
     </div><!-- /.col-lg-8 -->
 
-        <div class="col-lg-4 session_info">
+    <div class="col-lg-4 session_info">
 
         <ul id="users">
-        <b>Users</b>
+            <b>Users</b>
             {% for user in users %}
-                    <li>{{ user.name }}</li>
+                <li>{{ user.name }}</li>
             {% endfor %}
         </ul>
-        <ul id="playables">
+
+        <ul id="playables" class="list-group">
             <b>Playables</b>
             {% for playable in playables %}
-                <li>{{ playable.url }}</li>
-                </a>
+                <li class="list-group-item">
+                        <span class="upvote">
+                            &#x25B2;
+                        </span>
+                        <span class="downvote">
+                            &#x25BC;
+                        </span>
+
+                    <span class="title">{{ playable.url }}</span>
+                    <span class="label label-default label-pill pull-xs-right">{{ playable.score }}</span>
+
+
+                </li>
+
             {% endfor %}
         </ul>
 
