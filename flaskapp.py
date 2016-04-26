@@ -309,9 +309,9 @@ def getUpdate():
     except:
         print("Unexpected error:", sys.exc_info()[0])
         #raise
-
-    print("Updated: ",current_user.time_updated)
     current_user.time_updated = datetime.utcnow()
+    #print("Updated: ",[playable.get_dict() for playable in playables])
+
     return Response(json.dumps([playable.get_dict() for playable in playables]), mimetype='application/json')
 
 '''

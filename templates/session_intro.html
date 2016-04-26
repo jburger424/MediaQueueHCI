@@ -5,25 +5,8 @@
 
 {% block page_content %}
 
-    <div class="page-header">
-        <br>Users<br>
-        <ul id="users">
-            {% for user in users %}
-                <a href="/artists/{{ user.name }}">
-                    <li>{{ user.name }}</li>
-                </a>
-            {% endfor %}
-        </ul>
-        <ul id="playables">
-            <br>Playables<br>
-            {% for playable in playables %}
-                <li>{{ playable.url }}</li>
-                </a>
-            {% endfor %}
-        </ul>
 
-    </div>
-    <div class="col-lg-6">
+    <div class="col-lg-8">
         <form id="url_form">
             <div class="add-link input-group">
                 <input type="text" class="form-control" placeholder="Add Youtube URL">
@@ -32,6 +15,40 @@
       </span>
             </div><!-- /input-group -->
         </form>
-    </div><!-- /.col-lg-6 -->
-    <iframe width="854" height="480" src="https://www.youtube.com/embed/jRHQPG1xd9o" frameborder="0" allowfullscreen></iframe>
+    <div id="player"></div>
+        <script>
+      // 2. This code loads the IFrame Player API code asynchronously.
+      var tag = document.createElement('script');
+
+      tag.src = "https://www.youtube.com/iframe_api";
+      var firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+      // 3. This function creates an <iframe> (and YouTube player)
+      //    after the API code downloads.
+
+    </script>
+    <!--TODO take this out of the html file-->
+    </div><!-- /.col-lg-8 -->
+
+        <div class="col-lg-4 session_info">
+
+        <ul id="users">
+        <b>Users</b>
+            {% for user in users %}
+                <a href="/artists/{{ user.name }}">
+                    <li>{{ user.name }}</li>
+                </a>
+            {% endfor %}
+        </ul>
+        <ul id="playables">
+            <b>Playables</b>
+            {% for playable in playables %}
+                <li>{{ playable.url }}</li>
+                </a>
+            {% endfor %}
+        </ul>
+
+    </div>
+
 {% endblock %}

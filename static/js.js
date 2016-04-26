@@ -1,5 +1,7 @@
 jQuery(function ($) { // First argument is the jQuery object
-    $('#url_form').submit(function(event){
+    var vWidth = $(".add-link.input-group").width();
+    var vHeight = vWidth * (9 / 16);
+    $('#url_form').submit(function (event) {
         event.preventDefault();
         var url = $('.add-link .form-control').val();
         //TODO figure out how to do added by
@@ -16,6 +18,7 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
+        $(".add-link input.form-control").val("")
         /*$.ajax({
          url: '/session/585/add',
          data: $('form').serialize(),
@@ -28,26 +31,90 @@ jQuery(function ($) { // First argument is the jQuery object
          }
          });*/
     });
-    function update(){
-                $.ajax({
+    function update() {
+        $.ajax({
             type: "GET",
             url: "/session/update/",
             dataType: "json", // Set the data type so jQuery can parse it for you
             success: function (data) {
 
-                for(var i in data){
-                    $("#playables").append("<li>"+data[i]['URL']+"</li>");
-                    console.log("Adding: "+data[i]['URL']);
+                for (var i in data) {
+                    $("#playables").append("<li>" + data[i]['URL'] + "</li>");
+                    console.log("Adding: " + data[i]['URL']);
                 }
             }
         });
     }
+
     //update every second
     setInterval(function () {
         update();
+        //console.log("updating")
     }, 1000);
-});
 
+});
+function findBootstrapEnvironment() {
+    var envs = ['xs', 'sm', 'md', 'lg'];
+
+    var $el = $('<div>');
+    $el.appendTo($('body'));
+
+    for (var i = envs.length - 1; i >= 0; i--) {
+        var env = envs[i];
+
+        $el.addClass('hidden-' + env);
+        if ($el.is(':hidden')) {
+            $el.remove();
+            return env;
+        }
+    }
+}
+if (findBootstrapEnvironment() == "lg") {
+    $("#playables").on('click', 'li', function () {
+        //alert($(this).text());
+        player.loadVideoById({
+            'videoId': $(this).text(),
+            'suggestedQuality': 'large'
+        });
+
+    });
+    var player;
+    var vWidth = $(".add-link.input-group").width();
+    var vHeight = vWidth * (9 / 16);
+
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: vHeight,
+            width: vWidth,
+            videoId: 'M7lc1UVf-VE',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+// 4. The API will call this function when the video player is ready.
+    function onPlayerReady(event) {
+        event.target.playVideo();
+    }
+
+// 5. The API calls this function when the player's state changes.
+//    The function indicates that when playing a video (state=1),
+//    the player should play for six seconds and then stop.
+    var done = false;
+
+    function onPlayerStateChange(event) {
+        /*if (event.data == YT.PlayerState.PLAYING && !done) {
+            setTimeout(stopVideo, 6000);
+            done = true;
+        }*/
+    }
+
+    function stopVideo() {
+        player.stopVideo();
+    }
+}
 
 //old stuff starts
 /*var substringMatcher = function (strs) {
