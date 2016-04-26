@@ -127,11 +127,13 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), index=True)
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
+    time_joined = db.Column(db.DateTime())
     time_updated = db.Column(db.DateTime())
     is_player = 0
 
     def __repr__(self):
         return '<User %r>' % self.name
+
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -215,7 +217,7 @@ def join_session():
             db.session.commit()
             login_user(user)
             users = User.query.filter_by(session_id=session.id).all()
-            return render_template('session_intro.html', users=users)
+            return render_template('session.html', users=users)
     return render_template('create_session.html', nicknameForm=joinForm)
 
 '''
@@ -235,7 +237,7 @@ def join_session(url_hex_key):
 
     #could reduce this logic
     if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
-                    return render_template('session_intro.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
+                    return render_template('session.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
     if joinForm.validate_on_submit():
         name = joinForm.name.data
         session = Session.query.filter_by(hex_key=url_hex_key).first()
@@ -244,7 +246,7 @@ def join_session(url_hex_key):
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        return render_template('session_intro.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
+        return render_template('session.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
 
     return render_template('create_session.html', nicknameForm=joinForm)
 
@@ -264,7 +266,8 @@ def new_session():
         session = Session(hex_key=session_hex)
         user = User(name=nicknameForm.name.data,
                     session=session,
-                    time_updated = datetime.utcnow())
+                    time_updated = datetime.utcnow(),
+                    time_joined = datetime.utcnow())
         db.session.add(session)
         db.session.add(user)
         db.session.commit()
@@ -301,6 +304,7 @@ def addPlayable():
 #should recieve time last updated (from here) and return playable added since then, can maybe get from current user
 def getUpdate():
     playables = []
+    users = []
     try:
         playables=Playable.query.filter(
             current_user.session_id == Playable.session_id,
@@ -308,9 +312,16 @@ def getUpdate():
         )
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        #raise
+
+    try:
+        users=User.query.filter(
+            current_user.session_id == User.session_id,
+            current_user.time_updated < User.time_joined
+        )
+    except:
+        print("Unexpected error:", sys.exc_info()[0])
     current_user.time_updated = datetime.utcnow()
-    #print("Updated: ",[playable.get_dict() for playable in playables])
+    print("Updated: ",[user.get_dict() for user in users])
 
     return Response(json.dumps([playable.get_dict() for playable in playables]), mimetype='application/json')
 
