@@ -134,6 +134,10 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.name
 
+    def get_dict(self):
+        dict = {'Name': self.name}
+        return dict
+
 
 
 class AnonymousUser(AnonymousUserMixin):
@@ -241,11 +245,15 @@ def join_session(url_hex_key):
     if joinForm.validate_on_submit():
         name = joinForm.name.data
         session = Session.query.filter_by(hex_key=url_hex_key).first()
+        now = datetime.utcnow()
         user = User(name=name,
-                    session=session)
+                    session=session,
+                    time_updated = now,
+                    time_joined = now)
         db.session.add(user)
         db.session.commit()
         login_user(user)
+        users = User.query.filter_by(session_id=session.id).all()
         return render_template('session.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
 
     return render_template('create_session.html', nicknameForm=joinForm)
@@ -264,10 +272,11 @@ def new_session():
             if hex_check is None:
                 break
         session = Session(hex_key=session_hex)
+        now = datetime.utcnow()
         user = User(name=nicknameForm.name.data,
                     session=session,
-                    time_updated = datetime.utcnow(),
-                    time_joined = datetime.utcnow())
+                    time_updated = now,
+                    time_joined = now)
         db.session.add(session)
         db.session.add(user)
         db.session.commit()
@@ -311,7 +320,7 @@ def getUpdate():
             current_user.time_updated < Playable.time_added
         )
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected Playable error:", sys.exc_info()[0])
 
     try:
         users=User.query.filter(
@@ -319,11 +328,14 @@ def getUpdate():
             current_user.time_updated < User.time_joined
         )
     except:
-        print("Unexpected error:", sys.exc_info()[0])
+        print("Unexpected User error:", sys.exc_info()[0])
     current_user.time_updated = datetime.utcnow()
-    print("Updated: ",[user.get_dict() for user in users])
+    users = [user.get_dict() for user in users]
+    playables = [playable.get_dict() for playable in playables]
+    dict = {'users': users, 'playables': playables}
+    print(users)
 
-    return Response(json.dumps([playable.get_dict() for playable in playables]), mimetype='application/json')
+    return Response(json.dumps(dict), mimetype='application/json')
 
 '''
 ##todo, check that email is unique

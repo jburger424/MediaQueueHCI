@@ -37,10 +37,17 @@ jQuery(function ($) { // First argument is the jQuery object
             url: "/session/update/",
             dataType: "json", // Set the data type so jQuery can parse it for you
             success: function (data) {
-
-                for (var i in data) {
-                    $("#playables").append("<li>" + data[i]['URL'] + "</li>");
-                    console.log("Adding: " + data[i]['URL']);
+                var users = data['users'];
+                var playables = data['playables'];
+                console.log(users);
+                console.log(playables);
+                for (var i in playables) {
+                    $("#playables").append("<li>" + playables[i]['URL'] + "</li>");
+                    console.log("Adding: " + playables[i]['URL']);
+                }
+                for (var j in users) {
+                    $("#users").append("<li>" + users[j]['Name'] + "</li>");
+                    console.log("Adding: " + users[j]['Name']);
                 }
             }
         });
