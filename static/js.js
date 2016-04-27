@@ -22,7 +22,7 @@ jQuery(function ($) { // First argument is the jQuery object
     });
     $('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
         var url = $(this).siblings(".title").first().text()
-        var voteVal = $(this).hasClass("upvote")?1:-1;
+        var voteVal = $(this).hasClass("upvote") ? 1 : -1;
 
         $.ajax({
             type: "POST",
@@ -48,13 +48,25 @@ jQuery(function ($) { // First argument is the jQuery object
                 //console.log(users);
                 //console.log(playables);
                 for (var i in playables) {
-                    $("#playables").append("<li class='list-group-item'>"+
-                        "<span class='upvote'>&#x25B2;</span>"+
-                        "<span class='downvote'>&#x25BC;</span>"+
-                            "<span class='title'>"+playables[i]['URL']+"</span>"+
-                            "<span class='label label-default label-pill pull-xs-right'>"+(playables[i]['Score']).toString()+"</span>"+
+                    var url = playables[i]['URL'];
+                    var score = playables[i]['Score'];
+
+                    //sees if this url already exists in list
+                    var listItem = $("li.list-group-item[data-url='"+url+"']");
+                    if (!listItem.length) {
+                                            $("#playables").append("<li class='list-group-item data-url='" +
+                        playables[i]['URL'] + "'>" +
+                        "<span class='upvote'>&#x25B2;</span>" +
+                        "<span class='downvote'>&#x25BC;</span>" +
+                        "<span class='title'>" + playables[i]['URL'] + "</span>" +
+                        "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['Score']).toString() + "</span>" +
                         "</li>"
                     );
+                    }
+                    else{
+                        listItem.find(".score").text(score);
+                    }
+
                     console.log("Adding: " + playables[i]['URL'] + "with score" + playables[i]['Score']);
                 }
                 for (var j in users) {
@@ -126,7 +138,7 @@ if (findBootstrapEnvironment() == "lg") {
     var done = false;
 
     function onPlayerStateChange(event) {
-        if(event['data'] == 0){
+        if (event['data'] == 0) {
             console.log("video_ended");
             goToNext();
         }
