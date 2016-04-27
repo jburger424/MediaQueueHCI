@@ -241,7 +241,8 @@ def join_session(url_hex_key):
 
     #could reduce this logic
     if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
-                    return render_template('session.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
+                    playables=Playable.query.filter_by(session_id=session.id).order_by(Playable.score.desc())
+                    return render_template('session.html', users=users, playables=playables)
     if joinForm.validate_on_submit():
         name = joinForm.name.data
         session = Session.query.filter_by(hex_key=url_hex_key).first()
@@ -254,7 +255,8 @@ def join_session(url_hex_key):
         db.session.commit()
         login_user(user)
         users = User.query.filter_by(session_id=session.id).all()
-        return render_template('session.html', users=users, playables=Playable.query.filter_by(session_id=session.id).all())
+        playables=Playable.query.filter_by(session_id=session.id).order_by(Playable.score)
+        return render_template('session.html', users=users, playables=playables)
 
     return render_template('create_session.html', nicknameForm=joinForm)
 

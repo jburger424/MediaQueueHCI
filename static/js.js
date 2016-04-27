@@ -42,36 +42,36 @@ jQuery(function ($) { // First argument is the jQuery object
     console.log("ho");
 
 
-    if (true) {//findBootstrapEnvironment() == "lg") {
+    if (findBootstrapEnvironment() == "lg") {
         console.log("if");
 
         var player;
         var vWidth = $(".add-link.input-group").width();
         var vHeight = vWidth * (9 / 16);
-            window.onYouTubePlayerAPIReady = function ()  {
-        console.log("something working");
-        player = new YT.Player('player', {
-            height: vHeight,
-            width: vWidth,
-            videoId: 'g4mHPeMGTJM',
-            events: {
-                'onReady': onPlayerReady,
-                'onStateChange': onPlayerStateChange
-            }
+        window.onYouTubePlayerAPIReady = function () {
+            console.log("something working");
+            player = new YT.Player('player', {
+                height: vHeight,
+                width: vWidth,
+                videoId: 'g4mHPeMGTJM',
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        };
+
+
+        $("ul#playables").on('click', 'li', function () {
+            //alert($(this).text());
+            $("ul#playables .active").removeClass("active");
+            $(this).addClass("active");
+            player.loadVideoById({
+                'videoId': $(this).children(".title").text(),
+                'suggestedQuality': 'large'
+            });
+
         });
-    }
-
-
-        /*$("ul#playables").on('click', 'li', function () {
-         //alert($(this).text());
-         $("ul#playables .active").removeClass("active");
-         $(this).addClass("active");
-         player.loadVideoById({
-         'videoId': $(this).children(".title").text(),
-         'suggestedQuality': 'large'
-         });
-
-         });*/
 
 // 4. The API will call this function when the video player is ready.
         /* function onPlayerReady(event) {
@@ -96,18 +96,19 @@ jQuery(function ($) { // First argument is the jQuery object
 //    the player should play for six seconds and then stop.
         var done = false;
 
-        /*function onPlayerStateChange(event) {
-         if (event['data'] == 0) {
-         console.log("video_ended");
-         goToNext();
-         }
-         }*/
         function onPlayerStateChange(event) {
-            if (event.data == YT.PlayerState.PLAYING && !done) {
-                setTimeout(stopVideo, 6000);
-                done = true;
+            if (event['data'] == 0) {
+                console.log("video_ended");
+                goToNext();
             }
         }
+
+        /*function onPlayerStateChange(event) {
+         if (event.data == YT.PlayerState.PLAYING && !done) {
+         setTimeout(stopVideo, 6000);
+         done = true;
+         }
+         }*/
 
         function stopVideo() {
             player.stopVideo();
@@ -139,7 +140,7 @@ jQuery(function ($) { // First argument is the jQuery object
             url: "/session/vote",
             data: JSON.stringify({url: url, vote: voteVal}),
             success: function (data) {
-                console.log("New Score: "+data.new_score);
+                console.log("New Score: " + data.new_score);
                 //console.log(data.article);
             },
             dataType: "json"
@@ -177,6 +178,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     else {
                         listItem.find(".score").text(score);
                     }
+                    sort(listItem);
 
                     console.log("Adding: " + playables[i]['URL'] + " with score" + playables[i]['Score']);
                 }
@@ -241,21 +243,27 @@ jQuery(function ($) { // First argument is the jQuery object
         //this is doing for each from bottom to top except for selected
         var top;
         var topScore = parseInt($("ul#playables li").first().find(".score").text(), 10);
+        var bottomScore = parseInt($("ul#playables li").last().find(".score").text(), 10);
         if (clickedScore > topScore) {
             top = $("ul#playables li").first();
         }
+        else if (clickedScore < bottomScore) {
+                top = clicked;
+                clicked = $("ul#playables li").last();
+        }
         else {
+
             $("li").not(clicked.add(clicked.prev())).each(function () {
                 var thisScore = parseInt($(this).find(".score").text(), 10);
                 var nextScore = parseInt($(this).next().find(".score").text(), 10);
                 //console.log(thisScore, nextScore);
                 //was or equal to
                 if (nextScore < clickedScore && thisScore >= clickedScore && $(this) != clicked) {
-                   // console.log("Move score " + clickedScore + " to before " + $(this).next().text());
+                    // console.log("Move score " + clickedScore + " to before " + $(this).next().text());
                     top = $(this).next().length ? $(this).next() : top;
                 }
                 else {
-                //#console.log("Not Match: \n \tClicked Score: " + clickedScore + "\n\tThis Score: " + thisScore + "\n\tNext Score: " + nextScore + "\n\n")
+                    //#console.log("Not Match: \n \tClicked Score: " + clickedScore + "\n\tThis Score: " + thisScore + "\n\tNext Score: " + nextScore + "\n\n")
                 }
             });
 

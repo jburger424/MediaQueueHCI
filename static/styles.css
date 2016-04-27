@@ -2,6 +2,27 @@
     padding-right:0;
     padding-left:0;
 }
+span.upvote {
+    font-size: 1.8em;
+}
+
+span.downvote {
+    font-size: 1.8em;
+}
+
+li.list-group-item {
+    height: 4em;
+           -webkit-touch-callout: none;
+       -webkit-user-select: none;
+       -khtml-user-select: none;
+       -moz-user-select: none;
+       -ms-user-select: none;
+        user-select: none;
+}
+
+span.title {
+    line-height: 3em;
+}
 li.active:after {
         content: '\25BA';
 }
