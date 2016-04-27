@@ -17,13 +17,118 @@ jQuery(function ($) { // First argument is the jQuery object
             },
             dataType: "json"
         });
-        setTimeout(function () {
-            update();
-        }, 200);
+        //update();
 
         $(".add-link input.form-control").val("");
     });
-    $("#playables li").on('click', '.upvote,.downvote', function () {
+    function findBootstrapEnvironment() {
+        var envs = ['xs', 'sm', 'md', 'lg'];
+
+        var $el = $('<div>');
+        $el.appendTo($('body'));
+
+        for (var i = envs.length - 1; i >= 0; i--) {
+            var env = envs[i];
+
+            $el.addClass('hidden-' + env);
+            if ($el.is(':hidden')) {
+                $el.remove();
+                return env;
+            }
+        }
+        console.log("hello");
+    }
+
+    console.log("ho");
+
+
+    if (true) {//findBootstrapEnvironment() == "lg") {
+        console.log("if");
+
+        var player;
+        var vWidth = $(".add-link.input-group").width();
+        var vHeight = vWidth * (9 / 16);
+            window.onYouTubePlayerAPIReady = function ()  {
+        console.log("something working");
+        player = new YT.Player('player', {
+            height: vHeight,
+            width: vWidth,
+            videoId: 'g4mHPeMGTJM',
+            events: {
+                'onReady': onPlayerReady,
+                'onStateChange': onPlayerStateChange
+            }
+        });
+    }
+
+
+        /*$("ul#playables").on('click', 'li', function () {
+         //alert($(this).text());
+         $("ul#playables .active").removeClass("active");
+         $(this).addClass("active");
+         player.loadVideoById({
+         'videoId': $(this).children(".title").text(),
+         'suggestedQuality': 'large'
+         });
+
+         });*/
+
+// 4. The API will call this function when the video player is ready.
+        /* function onPlayerReady(event) {
+         //event.target.playVideo();
+         player.loadVideoById({
+         'videoId': "g4mHPeMGTJM",
+         });
+         }*/
+        var ready = false;
+
+        /*function onPlayerReady(event) {
+         ready = true;
+         console.log("Player:");
+         console.log(player);
+         }*/
+        function onPlayerReady(event) {
+            event.target.playVideo();
+        }
+
+// 5. The API calls this function when the player's state changes.
+//    The function indicates that when playing a video (state=1),
+//    the player should play for six seconds and then stop.
+        var done = false;
+
+        /*function onPlayerStateChange(event) {
+         if (event['data'] == 0) {
+         console.log("video_ended");
+         goToNext();
+         }
+         }*/
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.PLAYING && !done) {
+                setTimeout(stopVideo, 6000);
+                done = true;
+            }
+        }
+
+        function stopVideo() {
+            player.stopVideo();
+        }
+
+        //start queue code
+        function goToNext() {
+            $("#playables li:first").remove();
+            $("#playables li:first").addClass("active");
+            player.loadVideoById({
+                'videoId': $("ul#playables li:first").find(".title").text(),
+                'suggestedQuality': 'large'
+            });
+        }
+    }
+    else {
+        console.log("else");
+    }
+
+    $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
+        console.log("VOTE!");
         //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
         var url = $(this).siblings(".title").first().text();
         var voteVal = $(this).hasClass("upvote") ? 1 : -1;
@@ -34,15 +139,16 @@ jQuery(function ($) { // First argument is the jQuery object
             url: "/session/vote",
             data: JSON.stringify({url: url, vote: voteVal}),
             success: function (data) {
-                //console.log(data.title);
+                console.log("New Score: "+data.new_score);
                 //console.log(data.article);
             },
             dataType: "json"
         });
         update();
-        sort($(this).parent("li"));
+        sort($(this).parent("li")).delay(400);
     });
     function update() {
+        //console.log("updating");
         $.ajax({
             type: "GET",
             url: "/session/update/",
@@ -59,7 +165,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     //sees if this url already exists in list
                     var listItem = $("li.list-group-item[data-url='" + url + "']");
                     if (!listItem.length) {
-                        $("#playables").append("<li class='list-group-item data-url='" +
+                        $("#playables").append("<li class='list-group-item' data-url='" +
                             playables[i]['URL'] + "'>" +
                             "<span class='upvote'>&#x25B2;</span>" +
                             "<span class='downvote'>&#x25BC;</span>" +
@@ -83,10 +189,12 @@ jQuery(function ($) { // First argument is the jQuery object
     }
 
     //update every second
-    setInterval(function () {
+    var doUpdate = function () {
         update();
+        setTimeout(doUpdate, 1000);
         //console.log("updating")
-    }, 1000);
+    };
+    doUpdate();
     /*var check = function(){
      if(condition){
      // run when condition is met
@@ -98,173 +206,101 @@ jQuery(function ($) { // First argument is the jQuery object
 
 
 //});
-    function findBootstrapEnvironment() {
-        var envs = ['xs', 'sm', 'md', 'lg'];
 
-        var $el = $('<div>');
-        $el.appendTo($('body'));
-
-        for (var i = envs.length - 1; i >= 0; i--) {
-            var env = envs[i];
-
-            $el.addClass('hidden-' + env);
-            if ($el.is(':hidden')) {
-                $el.remove();
-                return env;
-            }
-        }
-    }
 
 //reordering animation http://zurb.com/forrst/posts/Animated_list_item_reordering_in_jQuery-RR1
-    if (findBootstrapEnvironment() == "lg") {
-        $("#playables").on('click', 'li', function () {
-            //alert($(this).text());
-            $(this).addClass("active");
-            player.loadVideoById({
-                'videoId': $(this).children(".title").text(),
-                'suggestedQuality': 'large'
+
+
+    /*Start Sliding Playables for voting*/
+    var allItems = $("ul li");
+    var numItems = allItems.length;
+    /*for(i=0; i<allItems.length; i++){
+     sort($(allItems[numItems-i+1]));
+     }*/
+
+    $("ul#playables").on("click", "li", function () {
+        console.log('clicked');
+        sort($(this));
+    });
+
+    $("button#sub_new_score").click(function () {
+        var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
+        newItem.ready(sort($(this)));
+    });
+
+    function sort(thisObj) {
+        var clicked = thisObj;
+        var clickedScore = parseInt($(clicked).find(".score").text(), 10);
+        console.log("Clicked Score:  " + clickedScore);
+        // all the LIs above the clicked one
+        var previousAll = clicked.prevAll();
+
+        // only proceed if it's not already on top (no previous siblings)
+        // top LI
+
+        //this is doing for each from bottom to top except for selected
+        var top;
+        var topScore = parseInt($("ul#playables li").first().find(".score").text(), 10);
+        if (clickedScore > topScore) {
+            top = $("ul#playables li").first();
+        }
+        else {
+            $("li").not(clicked.add(clicked.prev())).each(function () {
+                var thisScore = parseInt($(this).find(".score").text(), 10);
+                var nextScore = parseInt($(this).next().find(".score").text(), 10);
+                //console.log(thisScore, nextScore);
+                //was or equal to
+                if (nextScore < clickedScore && thisScore >= clickedScore && $(this) != clicked) {
+                   // console.log("Move score " + clickedScore + " to before " + $(this).next().text());
+                    top = $(this).next().length ? $(this).next() : top;
+                }
+                else {
+                //#console.log("Not Match: \n \tClicked Score: " + clickedScore + "\n\tThis Score: " + thisScore + "\n\tNext Score: " + nextScore + "\n\n")
+                }
             });
 
-        });
-        var player;
-        var vWidth = $(".add-link.input-group").width();
-        var vHeight = vWidth * (9 / 16);
 
-        function onYouTubeIframeAPIReady() {
-            console.log("something working");
-            player = new YT.Player('player', {
-                height: vHeight,
-                width: vWidth,
-                videoId: 'g4mHPeMGTJM',
-                events: {
-                    'onReady': onPlayerReady,
-                    'onStateChange': onPlayerStateChange
+        }
+
+        if (typeof top == 'undefined') {
+            console.log("No Swap Necessary");
+        }
+        else {
+            previousAll = top.index() < clicked.index() ? clicked.prevUntil(top.prev()) : previousAll = clicked.nextUntil(top);
+            var previous = $(previousAll[0]);
+
+            //if moving item up
+            var moveUp = top.index() < clicked.index() ? clicked.offset().top - top.offset().top : (top.offset().top - clicked.offset().top - clicked.outerHeight()) * -1;
+            var moveDown = (clicked.offset().top + clicked.outerHeight()) - (previous.offset().top + previous.outerHeight());
+
+
+            console.log("Move Up: " + moveUp);
+            console.log("Move Down: " + moveDown);
+            // let's move stuff
+            clicked.css('position', 'relative');
+            previousAll.css('position', 'relative');
+            clicked.animate({
+                'top': -moveUp
+            });
+            previousAll.animate({
+                'top': moveDown
+            }, {
+                complete: function () {
+                    clicked.insertBefore(top);
+                    clicked.css({
+                        'position': 'static',
+                        'top': 0
+                    });
+                    previousAll.css({
+                        'position': 'static',
+                        'top': 0
+                    });
                 }
             });
         }
-
-// 4. The API will call this function when the video player is ready.
-        function onPlayerReady(event) {
-            event.target.playVideo();
-        }
-
-// 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
-        var done = false;
-
-        function onPlayerStateChange(event) {
-            if (event['data'] == 0) {
-                console.log("video_ended");
-                goToNext();
-            }
-        }
-
-        function stopVideo() {
-            player.stopVideo();
-        }
-
-        //start queue code
-        function goToNext() {
-            $("#playables li:first").remove();
-            $("#playables li:first").addClass("active");
-            player.loadVideoById({
-                'videoId': $("ul#playables li:first").find(".title").text(),
-                'suggestedQuality': 'large'
-            });
-        }
-
-        /*Start Sliding Playables for voting*/
-        var allItems = $("ul li");
-        var numItems = allItems.length;
-        /*for(i=0; i<allItems.length; i++){
-         sort($(allItems[numItems-i+1]));
-         }*/
-
-        $("ul#playables").on("click", "li", function () {
-            console.log('clicked');
-            sort($(this));
-        });
-
-        $("button#sub_new_score").click(function () {
-            var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
-            newItem.ready(sort($(this)));
-        });
-
-        function sort(thisObj) {
-            var clicked = thisObj;
-            var clickedScore = parseInt($(clicked).find(".score").text(), 10);
-            console.log("Clicked Score:  " + clickedScore);
-            // all the LIs above the clicked one
-            var previousAll = clicked.prevAll();
-
-            // only proceed if it's not already on top (no previous siblings)
-            // top LI
-
-            //this is doing for each from bottom to top except for selected
-            var top;
-            var topScore = parseInt($("ul#playables li").first().find(".score").text(), 10);
-            if (clickedScore > topScore) {
-                top = $("ul#playables li").first();
-            }
-            else {
-                $("li").not(clicked.add(clicked.prev())).each(function () {
-                    var thisScore = parseInt($(this).find(".score").text(), 10);
-                    var nextScore = parseInt($(this).next().find(".score").text(), 10);
-                    console.log(thisScore, nextScore);
-                    //was or equal to
-                    if (nextScore < clickedScore && thisScore >= clickedScore && $(this) != clicked) {
-                        console.log("Move score " + clickedScore + " to before " + $(this).next().text());
-                        top = $(this).next().length ? $(this).next() : top;
-                    }
-                    else {
-                        console.log("Not Match: \n \tClicked Score: " + clickedScore + "\n\tThis Score: " + thisScore + "\n\tNext Score: " + nextScore + "\n\n")
-                    }
-                });
-
-
-            }
-
-            if (typeof top == 'undefined') {
-                console.log("No Swap Necessary");
-            }
-            else {
-                previousAll = top.index() < clicked.index() ? clicked.prevUntil(top.prev()) : previousAll = clicked.nextUntil(top);
-                var previous = $(previousAll[0]);
-
-                //if moving item up
-                var moveUp = top.index() < clicked.index() ? clicked.offset().top - top.offset().top : (top.offset().top - clicked.offset().top - clicked.outerHeight()) * -1;
-                var moveDown = (clicked.offset().top + clicked.outerHeight()) - (previous.offset().top + previous.outerHeight());
-
-
-                console.log("Move Up: " + moveUp);
-                console.log("Move Down: " + moveDown);
-                // let's move stuff
-                clicked.css('position', 'relative');
-                previousAll.css('position', 'relative');
-                clicked.animate({
-                    'top': -moveUp
-                });
-                previousAll.animate({
-                    'top': moveDown
-                }, {
-                    complete: function () {
-                        clicked.insertBefore(top);
-                        clicked.css({
-                            'position': 'static',
-                            'top': 0
-                        });
-                        previousAll.css({
-                            'position': 'static',
-                            'top': 0
-                        });
-                    }
-                });
-            }
-        }
-
-        /*end*/
     }
+
+    /*end*/
 });
 
 //old stuff starts
