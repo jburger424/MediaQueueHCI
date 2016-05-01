@@ -19,11 +19,6 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
-        if(!startedPlaying){
-            goToNext();
-            startedPlaying = true;
-        }
-
         $(".add-link input.form-control").val("");
     });
     function findBootstrapEnvironment() {
@@ -90,6 +85,7 @@ jQuery(function ($) { // First argument is the jQuery object
          console.log(player);
          }*/
         function onPlayerReady(event) {
+            //event.target.playVideo();
             if($("#playables li").length > 0){
                 goToNext();
                 startedPlaying = true;
@@ -124,7 +120,8 @@ jQuery(function ($) { // First argument is the jQuery object
         function goToNext() {
             //$("#playables li:first").remove();
             //$("#playables li:first").addClass("active");
-            $('#now_playing li:first').remove();
+            //$('#now_playing li:first').remove();
+            $('#history').append($("ul#now_playing li:first"));
             $('#now_playing').append($('#playables li:first'));
             player.loadVideoById({
                 'videoId': $("ul#now_playing li:first").attr("data-url"),
@@ -195,6 +192,12 @@ jQuery(function ($) { // First argument is the jQuery object
                     $("#users").append("<li>" + users[j]['Name'] + "</li>");
                     console.log("Adding: " + users[j]['Name']);
                 }
+                //if only 1 playable start
+                if($("#playables li").length == 1 && !startedPlaying){
+                    goToNext();
+                    startedPlaying = true;
+                }
+                event.target.playVideo();
             }
         });
     }

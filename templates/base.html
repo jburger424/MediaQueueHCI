@@ -15,7 +15,7 @@
     <nav class="navbar navbar-default" role="navigation">
         <!-- Brand and toggle get grouped for better mobile display -->
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse-1">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -27,35 +27,31 @@
             <a id="navbar_link" class="navbar-brand" href="/">{{ current_user.session.hex_key }}</a>
         {% endif %}
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <div class="collapse navbar-collapse" id="navbar">
 
             {% if current_user.is_authenticated and not current_user.is_anonymous %}
-                <ul class="nav navbar-nav navbar-left">
-                    <li class="dropdown">
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
-                           aria-expanded="false">{{ current_user.name }}<span class="caret"></span></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="/artists/{{ current_user.name }}">View/Edit Profile</a></li>
-                            <li><a href="/tracks/add/">Upload Music</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/artists/">Local Artists</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="/logout/">Log Out</a></li>
-                        </ul>
-                    </li>
+                <ul class="nav navbar-nav navbar">
+                    <li><a>{{ current_user.name }}</a></li>
                 </ul>
             {% else %}
-                <ul class="nav navbar-nav navbar-left">
-                    <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
-                        class="row">
-                        <a class="navbar-link" href="/login/">Log In</a>
-                    </li>
-                </ul>
-            {% endif %}
 
+            {% endif %}
+            <ul class="nav navbar-nav navbar-right">
             <!--<ul class="nav navbar-nav navbar-right">-->
             {% if current_user.is_authenticated and not current_user.is_anonymous %}
-                <ul class="nav navbar-nav navbar-right">
+
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i><span
+                                class="caret"></span></a>
+                        <ul id="history" class="dropdown-menu">
+                            <li><b>History</b></li>
+                        </ul>
+                    </li>
+            {% else %}
+                Something
+            {% endif %}
+            {% if current_user.is_authenticated and not current_user.is_anonymous %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false"><i class="fa fa-users" aria-hidden="true"></i><span
@@ -67,7 +63,6 @@
                             {% endfor %}
                         </ul>
                     </li>
-                </ul>
             {% else %}
                 <ul class="nav navbar-nav navbar-left">
                     <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
@@ -76,6 +71,7 @@
                     </li>
                 </ul>
             {% endif %}
+            </ul>
 
             <!-- </ul>-->
         </div><!-- /.navbar-collapse -->

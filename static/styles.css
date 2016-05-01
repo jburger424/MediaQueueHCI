@@ -2,7 +2,11 @@
     padding-right:0;
     padding-left:0;
 }
-ul#users {
+.navbar-header {
+    position: relative;
+    z-index: 100;
+}
+ul#users, ul#history {
     padding: 0px;
 }
 #now_playing b {
