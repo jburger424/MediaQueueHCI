@@ -1,6 +1,7 @@
 jQuery(function ($) { // First argument is the jQuery object
     //var vWidth = $(".add-link.input-group").width();
     //var vHeight = vWidth * (9 / 16);
+    var startedPlaying = false;
     $('#url_form').submit(function (event) {
         event.preventDefault();
         var url = $('.add-link .form-control').val();
@@ -18,6 +19,10 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
+        if(!startedPlaying){
+            goToNext();
+            startedPlaying = true;
+        }
 
         $(".add-link input.form-control").val("");
     });
@@ -36,10 +41,7 @@ jQuery(function ($) { // First argument is the jQuery object
                 return env;
             }
         }
-        console.log("hello");
     }
-
-    console.log("ho");
 
 
     if (findBootstrapEnvironment() == "lg") {
@@ -62,7 +64,7 @@ jQuery(function ($) { // First argument is the jQuery object
         };
 
 
-        $("ul#playables").on('click', 'li', function () {
+        /*$("ul#playables").on('click', 'li', function () {
             //alert($(this).text());
             $("ul#playables .active").removeClass("active");
             $(this).addClass("active");
@@ -71,7 +73,7 @@ jQuery(function ($) { // First argument is the jQuery object
                 'suggestedQuality': 'large'
             });
 
-        });
+        });*/
 
 // 4. The API will call this function when the video player is ready.
         /* function onPlayerReady(event) {
@@ -88,6 +90,10 @@ jQuery(function ($) { // First argument is the jQuery object
          console.log(player);
          }*/
         function onPlayerReady(event) {
+            if($("#playables li").length > 0){
+                goToNext();
+                startedPlaying = true;
+            }
             event.target.playVideo();
         }
 
@@ -116,10 +122,12 @@ jQuery(function ($) { // First argument is the jQuery object
 
         //start queue code
         function goToNext() {
-            $("#playables li:first").remove();
-            $("#playables li:first").addClass("active");
+            //$("#playables li:first").remove();
+            //$("#playables li:first").addClass("active");
+            $('#now_playing li:first').remove();
+            $('#now_playing').append($('#playables li:first'));
             player.loadVideoById({
-                'videoId': $("ul#playables li:first").attr("data-url"),
+                'videoId': $("ul#now_playing li:first").attr("data-url"),
                 'suggestedQuality': 'large'
             });
         }

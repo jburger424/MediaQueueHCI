@@ -26,7 +26,11 @@ li.list-group-item {
 }
 
 span.title {
-    line-height: 3em;
+    line-height: normal;
+    height: 100%;
+    width: 52%;
+    position: relative;
+    float: right;
 }
 li.active:after {
         content: '\25BA';
