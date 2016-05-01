@@ -8,6 +8,7 @@
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap-tokenfield.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
 {% endblock %}
 
 {% block navbar %}
@@ -22,13 +23,13 @@
             </button>
 
         </div>
-    {% if current_user.is_authenticated %}
-        <a id="navbar_link" class="navbar-brand" href="/">{{ current_user.session.hex_key }}</a>
-     {% endif %}
+        {% if current_user.is_authenticated %}
+            <a id="navbar_link" class="navbar-brand" href="/">{{ current_user.session.hex_key }}</a>
+        {% endif %}
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse navbar-collapse" id="navbar-collapse-1">
 
-            {% if current_user.is_authenticated and not current_user.is_anonymous%}
+            {% if current_user.is_authenticated and not current_user.is_anonymous %}
                 <ul class="nav navbar-nav navbar-left">
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -45,18 +46,36 @@
                 </ul>
             {% else %}
                 <ul class="nav navbar-nav navbar-left">
-                    <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan" class="row">
+                    <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
+                        class="row">
                         <a class="navbar-link" href="/login/">Log In</a>
                     </li>
                 </ul>
             {% endif %}
 
             <!--<ul class="nav navbar-nav navbar-right">-->
-            <form class="navbar-form navbar-right" role="search">
-                <div class="form-group">
-                    <input id="artistSearch" type="text" class="form-control" placeholder="Search Artists">
-                </div>
-            </form>
+            {% if current_user.is_authenticated and not current_user.is_anonymous %}
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false"><i class="fa fa-users" aria-hidden="true"></i><span
+                                class="caret"></span></a>
+                        <ul id="users" class="dropdown-menu">
+                            <li><b>Users</b></li>
+                            {% for user in users %}
+                                <li>{{ user.name }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                </ul>
+            {% else %}
+                <ul class="nav navbar-nav navbar-left">
+                    <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
+                        class="row">
+                        <a class="navbar-link" href="/login/">Log In</a>
+                    </li>
+                </ul>
+            {% endif %}
 
             <!-- </ul>-->
         </div><!-- /.navbar-collapse -->

@@ -174,7 +174,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     //sees if this url already exists in list
                     var listItem = $("li.list-group-item[data-url='" + url + "']");
                     if (!listItem.length) {
-                        $("#playables").append("<li class='list-group-item' data-url='" +
+                        $("#playables").append("<li class='clearfix list-group-item' data-url='" +
                             playables[i]['url'] + "'>" +
                             "<span class='upvote'>&#x25B2;</span>" +
                             "<span class='downvote'>&#x25BC;</span>" +

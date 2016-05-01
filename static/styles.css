@@ -2,6 +2,9 @@
     padding-right:0;
     padding-left:0;
 }
+ul#users {
+    padding: 0px;
+}
 #now_playing b {
     background: hsla(45,100%,45%,1);
 }
@@ -16,7 +19,8 @@ span.upvote, span.downvote {
     font-size: 1.8em;
 }
 li.list-group-item {
-    height: 4em;
+    /*height: 4em;*/
+    height: auto;
            -webkit-touch-callout: none;
        -webkit-user-select: none;
        -khtml-user-select: none;
