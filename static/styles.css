@@ -2,14 +2,19 @@
     padding-right:0;
     padding-left:0;
 }
-span.upvote {
+#now_playing b {
+    background: hsla(45,100%,45%,1);
+}
+#now_playing li.list-group-item {
+    text-align: center;
+    font-weight: bold;
+    background: whitesmoke;
+    border-color: #FFCA28;
+    border-width: 5px;
+}
+span.upvote, span.downvote {
     font-size: 1.8em;
 }
-
-span.downvote {
-    font-size: 1.8em;
-}
-
 li.list-group-item {
     height: 4em;
            -webkit-touch-callout: none;
@@ -67,7 +72,7 @@ ul b {
     /* cursor: zoom-in; */
 }
 .session_info ul li.active {
-    background: #ff0000;
+    background: #d4d4d4;
 }
 .session_info ul li:hover {
     background: rgb(226, 226, 145);

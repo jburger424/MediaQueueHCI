@@ -40,7 +40,12 @@
                 <li>{{ user.name }}</li>
             {% endfor %}
         </ul>
-
+        <ul id="now_playing" class="list-group">
+            <b>Now Playing</b>
+            <li class="list-group-item" data-url="url">
+                <span class="title">Title</span>
+            </li>
+        </ul>
         <ul id="playables" class="list-group">
             <b>Playables</b>
             {% for playable in playables %}
@@ -51,8 +56,8 @@
                         <span class="downvote">
                             &#x25BC;
                         </span>
-
-                    <span class="title">{{ playable.url }}</span>
+                    <img src='{{ playable.thumb_url }}' class='img-rounded' width='60' height='45'>
+                    <span class="title">{{ playable.name }}</span>
                     <span class="score label label-default label-pill pull-xs-right">{{ playable.score }}</span>
 
 

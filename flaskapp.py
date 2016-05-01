@@ -1,5 +1,7 @@
 import os
 import sys
+import requests
+from keys import YOUTUBE_API_KEY
 from datetime import datetime
 from random import randint
 import uuid
@@ -170,6 +172,8 @@ class Playable(db.Model):
     # __tablename__ = 'playable'
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(64), unique=False)
+    name = db.Column(db.String(256), unique=False)
+    thumb_url = db.Column(db.String(256), unique=False)
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer(), unique=False)
@@ -178,7 +182,7 @@ class Playable(db.Model):
     def __repr__(self):
         return '<Playable %r>' % self.url
     def get_dict(self):
-        dict = {'URL': self.url, 'Score': self.score}
+        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url}
         return dict
 
 
@@ -263,6 +267,7 @@ def join_session(url_hex_key):
 
 @app.route('/', methods=['GET', 'POST'])
 def new_session():
+    print(YOUTUBE_API_KEY)
     print("session created")
 
     nicknameForm = NicknameForm()
@@ -293,21 +298,31 @@ def new_session():
 @app.route('/session/add', methods=['POST'])
 def addPlayable():
     jsonData = request.json
-    print(current_user.name)
     hex_key = current_user.session.hex_key
     session = Session.query.filter_by(hex_key=hex_key).first()
-    newPlayable = jsonData.get('newPlayable')
-    print(newPlayable)
-    playable = Playable(url=newPlayable,
+    playable_url = jsonData.get('newPlayable')
+
+    #getting name and thumbnail from youtube
+    params = {'part': 'id,snippet', 'id': playable_url, 'key': YOUTUBE_API_KEY}
+    r = (requests.get('https://www.googleapis.com/youtube/v3/videos', params=params)).json()
+    print("R: ")
+    print(r)
+    playable_name = r['items'][0]['snippet']['title']
+    thumb_url = r['items'][0]['snippet']['thumbnails']['default']['url']
+
+
+    playable = Playable(url=playable_url,
                         session_id = session.id,
                         added_by_id = current_user.id,
-                        score = 0
+                        score = 0,
+                        name = playable_name,
+                        thumb_url = thumb_url
                         )
     playable.time_modified = datetime.utcnow()
     print(playable.time_modified)
     db.session.add(playable)
     db.session.commit()
-    newPlayableID = Playable.query.filter_by(url=newPlayable).first().id
+    newPlayableID = Playable.query.filter_by(url=playable_url).first().id
     # send back success message to js with new tag ID
     return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
 

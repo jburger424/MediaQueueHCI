@@ -17,7 +17,7 @@ jQuery(function ($) { // First argument is the jQuery object
             },
             dataType: "json"
         });
-        //update();
+        update();
 
         $(".add-link input.form-control").val("");
     });
@@ -67,7 +67,7 @@ jQuery(function ($) { // First argument is the jQuery object
             $("ul#playables .active").removeClass("active");
             $(this).addClass("active");
             player.loadVideoById({
-                'videoId': $(this).children(".title").text(),
+                'videoId': $(this).attr("data-url"),
                 'suggestedQuality': 'large'
             });
 
@@ -119,7 +119,7 @@ jQuery(function ($) { // First argument is the jQuery object
             $("#playables li:first").remove();
             $("#playables li:first").addClass("active");
             player.loadVideoById({
-                'videoId': $("ul#playables li:first").find(".title").text(),
+                'videoId': $("ul#playables li:first").attr("data-url"),
                 'suggestedQuality': 'large'
             });
         }
@@ -131,7 +131,7 @@ jQuery(function ($) { // First argument is the jQuery object
     $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
         console.log("VOTE!");
         //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
-        var url = $(this).siblings(".title").first().text();
+        var url = $(this).parent("li").attr("data-url");
         var voteVal = $(this).hasClass("upvote") ? 1 : -1;
 
         $.ajax({
@@ -160,18 +160,19 @@ jQuery(function ($) { // First argument is the jQuery object
                 //console.log(users);
                 //console.log(playables);
                 for (var i in playables) {
-                    var url = playables[i]['URL'];
-                    var score = playables[i]['Score'];
+                    var url = playables[i]['url'];
+                    var score = playables[i]['score'];
 
                     //sees if this url already exists in list
                     var listItem = $("li.list-group-item[data-url='" + url + "']");
                     if (!listItem.length) {
                         $("#playables").append("<li class='list-group-item' data-url='" +
-                            playables[i]['URL'] + "'>" +
+                            playables[i]['url'] + "'>" +
                             "<span class='upvote'>&#x25B2;</span>" +
                             "<span class='downvote'>&#x25BC;</span>" +
-                            "<span class='title'>" + playables[i]['URL'] + "</span>" +
-                            "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['Score']).toString() + "</span>" +
+                                "<img src='"+playables[i]['thumb_url']+"' class='img-rounded' width='60' height='45'>"+
+                            "<span class='title'>" + playables[i]['name'] + "</span>" +
+                            "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['score']).toString() + "</span>" +
                             "</li>"
                         );
                     }
@@ -180,7 +181,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     }
                     sort(listItem);
 
-                    console.log("Adding: " + playables[i]['URL'] + " with score" + playables[i]['Score']);
+                    console.log("Adding: " + playables[i]['name'] + " with score" + playables[i]['score']);
                 }
                 for (var j in users) {
                     $("#users").append("<li>" + users[j]['Name'] + "</li>");
