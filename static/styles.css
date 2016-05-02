@@ -2,6 +2,34 @@
     padding-right: 0;
     padding-left: 0;
 }
+.search_modal ul#search_results {
+  list-style: none;
+}
+
+.search_modal li {
+  position: relative;
+  padding: 5px 0px;
+}
+
+.search_modal ul li span {
+  width: 60%;
+  display: block;
+  float: right;
+}
+
+.search_modal img {
+  max-width: 30%;
+}
+.search_modal .add {
+  text-align: center;
+  width: 50px;
+  height: 50px;
+  background: green;
+  float: right;
+  line-height: 38px;
+  font-size: 50px;
+  color: white;
+}
 .navbar-default {
         background-color: #3F3CCC !Important;
     border-color: #d8d2d1 !Important;

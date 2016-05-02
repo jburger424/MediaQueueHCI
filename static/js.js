@@ -3,11 +3,7 @@ jQuery(function ($) { // First argument is the jQuery object
     //var vHeight = vWidth * (9 / 16);
     var startedPlaying = false;
     var playerReady = false;
-    $('#url_form').submit(function (event) {
-        event.preventDefault();
-        var url = $('.add-link .form-control').val();
-        //TODO figure out how to do added by
-
+    function addVidUrl(url){
         $.ajax({
             type: "POST",
             contentType: "application/json; charset=utf-8",
@@ -20,7 +16,44 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
+    }
+    $('#url_form').submit(function (event) {
+        event.preventDefault();
+        var url = $('.add-link .form-control').val();
+        addVidUrl(url);
         $(".add-link input.form-control").val("");
+    });
+      $("#vid-search button").click(function () {
+    var query = $("#vid-search input").val();
+    var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
+    $("ul#search_results").empty();
+    $.ajax({
+      type: "GET",
+      url: url,
+      dataType: "json", // Set the data type so jQuery can parse it for you
+      success: function (data) {
+        $("ul#search_results h2").remove();
+        $("ul#search_results").prepend("<h2>Results for "+query+"</h2>");
+
+        var items = data['items'];
+        console.log(items);
+        for (var i in items) {
+          var vid_id = items[i]['id']['videoId'];
+          var name = items[i]['snippet']['title'];
+          var img_url = items[i]['snippet']['thumbnails']['default']['url'];
+          console.log("name: " + name + " id: " + vid_id+ " img: "+img_url);
+          $("ul#search_results").append("<li data-vid='"+vid_id+"'> <img src='" +
+              img_url +
+              "' width = 120 height = 90 /> <div class='add'>+</div> <span>" +
+              name +
+              "</span></li>");
+        }
+      }
+    });
+  });
+    $("ul#search_results").on('click', 'li div.add', function () {
+        console.log($(this).parent("li").attr("data-vid"));
+        addVidUrl($(this).parent("li").attr("data-vid"));
     });
     function findBootstrapEnvironment() {
         var envs = ['xs', 'sm', 'md', 'lg'];
