@@ -40,10 +40,11 @@
             <b>Up Next</b>
             {% for playable in playables %}
                 <li class="clearfix list-group-item" data-url="{{ playable.url }}">
-                        <span class="upvote">
+                {{ playable.user_vote()}}
+                        <span class="upvote {% if playable.user_vote() > 0 %}clicked{%  endif %}">
                             &#x25B2;
                         </span>
-                        <span class="downvote">
+                        <span class="downvote {% if playable.user_vote() < 0 %}clicked{%  endif %}">
                             &#x25BC;
                         </span>
                     <img src='{{ playable.thumb_url }}' class='img-rounded' width='60' height='45'>

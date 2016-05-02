@@ -201,6 +201,13 @@ jQuery(function ($) { // First argument is the jQuery object
                     else {
                         listItem.find(".score").text(score);
                     }
+                    $(listItem).find(".clicked").removeClass("clicked");
+                    if(playables[i]['user_vote'] > 0){
+                        $(listItem).find(".upvote").addClass("clicked")
+                    }
+                    else if(playables[i]['user_vote'] < 0){
+                        $(listItem).find(".downvote").addClass("clicked")
+                    }
                     sort(listItem);
 
                     console.log("Adding: " + playables[i]['name'] + " with score" + playables[i]['score']);

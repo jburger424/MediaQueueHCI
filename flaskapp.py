@@ -181,10 +181,19 @@ class Playable(db.Model):
 
     def __repr__(self):
         return '<Playable %r>' % self.url
-
+    def user_vote(self):
+        vote_obj = Vote.query.filter(
+            current_user.id == Vote.added_by_id,
+            current_user.session_id == Vote.session_id,
+            self.id == Vote.playable_id
+        ).first()
+        if vote_obj is None:
+            return 0
+        else:
+            return vote_obj.value
     def get_dict(self):
-        #print(Vote)
-        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url}
+
+        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url, 'user_vote':self.user_vote()}
         return dict
 
 class Vote(db.Model):
@@ -198,11 +207,6 @@ class Vote(db.Model):
 
     def __repr__(self):
         return '<Playable %r>' % self.url
-
-    def get_dict(self):
-        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url}
-        return dict
-
 
 class NicknameForm(Form):
     # artistName = StringField('Artist Name*', validators=[Required()])
