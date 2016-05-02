@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="1354a17b-cbff-4058-a00c-05074a4ddf02" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/data.sqlite" afterPath="$PROJECT_DIR$/data.sqlite" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/templates/session.html" afterPath="$PROJECT_DIR$/templates/session.html" />
     </list>
     <ignored path="MegsArtist.iws" />
     <ignored path=".idea/workspace.xml" />
