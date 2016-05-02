@@ -40,7 +40,6 @@
             <b>Up Next</b>
             {% for playable in playables %}
                 <li class="clearfix list-group-item" data-url="{{ playable.url }}">
-                {{ playable.user_vote()}}
                         <span class="upvote {% if playable.user_vote() > 0 %}clicked{%  endif %}">
                             &#x25B2;
                         </span>

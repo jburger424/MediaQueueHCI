@@ -121,11 +121,11 @@ jQuery(function ($) { // First argument is the jQuery object
 
         //start queue code
         function goToNext() {
-            if ($("#playables li").length == 0 || !playerReady){
+            if ($("#playables li").length == 0 || !playerReady) {
                 console.log("herre");
                 setTimeout(goToNext, 500);
             }
-            else{
+            else {
                 console.log("derr");
                 startedPlaying = true;
                 $('#history').append($("ul#now_playing li:first"));
@@ -147,11 +147,11 @@ jQuery(function ($) { // First argument is the jQuery object
         //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
         var url = $(this).parent("li").attr("data-url");
         var voteVal = $(this).hasClass("upvote") ? 1 : -1;
-        if($(this).hasClass("clicked")){
+        if ($(this).hasClass("clicked")) {
             $(this).toggleClass("clicked");
             voteVal = 0; //unclicked a vote
         }
-        else{
+        else {
             $(this).parent().children(".clicked").removeClass("clicked");
             $(this).addClass("clicked");
         }
@@ -168,7 +168,7 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
-        sort($(this).parent("li"));//.delay(400);
+        sort($(this).parent("li")).delay(400);
     });
     function update() {
         //console.log("updating");
@@ -202,10 +202,10 @@ jQuery(function ($) { // First argument is the jQuery object
                         listItem.find(".score").text(score);
                     }
                     $(listItem).children(".clicked").removeClass("clicked");
-                    if(playables[i]['user_vote'] > 0){
+                    if (playables[i]['user_vote'] > 0) {
                         $(listItem).find(".upvote").addClass("clicked")
                     }
-                    else if(playables[i]['user_vote'] < 0){
+                    else if (playables[i]['user_vote'] < 0) {
                         $(listItem).find(".downvote").addClass("clicked")
                     }
                     sort(listItem);
@@ -216,7 +216,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     console.log("Adding: " + users[j]['Name']);
                 }
                 //if only 1 playable start
-                if(!startedPlaying){
+                if (!startedPlaying) {
                     startedPlaying = true;
                     goToNext();
                 }
