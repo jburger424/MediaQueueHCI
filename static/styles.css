@@ -1,18 +1,21 @@
 .no-gutter > [class*='col-'] {
-    padding-right:0;
-    padding-left:0;
+    padding-right: 0;
+    padding-left: 0;
 }
+
 .navbar-header {
     position: relative;
     z-index: 100;
 }
+
 ul#users, ul#history {
     padding: 0px;
 }
 
 #now_playing b {
-    background: hsla(45,100%,45%,1);
+    background: hsla(45, 100%, 45%, 1);
 }
+
 #now_playing li.list-group-item {
     text-align: center;
     font-weight: bold;
@@ -21,18 +24,20 @@ ul#users, ul#history {
     border-width: 5px;
     border-radius: 0px;
 }
+
 span.upvote, span.downvote {
     font-size: 1.8em;
 }
+
 li.list-group-item {
     /*height: 4em;*/
     height: auto;
-           -webkit-touch-callout: none;
-       -webkit-user-select: none;
-       -khtml-user-select: none;
-       -moz-user-select: none;
-       -ms-user-select: none;
-        user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 span.title {
@@ -42,8 +47,9 @@ span.title {
     position: relative;
     float: right;
 }
+
 li.active:after {
-        content: '\25BA';
+    content: '\25BA';
 }
 
 span.downvote {
@@ -55,10 +61,18 @@ span.upvote {
 }
 
 span.upvote:hover {
+    color: #59c554;
+}
+
+span.upvote.clicked {
     color: green;
 }
 
 span.downvote:hover {
+    color: #ff98a3;
+}
+
+span.downvote.clicked {
     color: red;
 }
 
@@ -85,21 +99,20 @@ ul b {
     /* cursor: -webkit-zoom-in; */
     /* cursor: zoom-in; */
 }
+
 .session_info ul li.active {
     background: #d4d4d4;
 }
+
 .session_info ul li:hover {
     background: rgb(226, 226, 145);
 }
 
-
-
-
-
-audio{
+audio {
     width: 100%;
 }
-#genre_error{
+
+#genre_error {
     color: #fefffd;
 }
 
@@ -112,7 +125,8 @@ audio{
     padding: 10px;
     background-color: white;
 }
-.tt-suggestion.tt-selectable:hover,.tt-suggestion.tt-selectable:active,.tt-suggestion.tt-selectable.tt-cursor {
+
+.tt-suggestion.tt-selectable:hover, .tt-suggestion.tt-selectable:active, .tt-suggestion.tt-selectable.tt-cursor {
     background-color: #DBE8E6;
 }
 
@@ -121,89 +135,104 @@ audio{
 }
 
 #tracks li.active {
-  background-color: #CCCCCC;
+    background-color: #CCCCCC;
 }
 
 #tracks li {
     list-style-type: none;
-  cursor: pointer;
+    cursor: pointer;
 }
-
 
 /*Lauren's*/
 .navbar-default {
-  background-color: #8a888a !Important;
-  border-color: #d8d2d1 !Important;
+    background-color: #8a888a !Important;
+    border-color: #d8d2d1 !Important;
 }
+
 .navbar-default .navbar-brand {
-  color: #ffffff;
+    color: #ffffff;
 }
+
 .navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-  color: #fdfdfd;
+    color: #fdfdfd;
 }
+
 .navbar-default .navbar-text {
-  color: #ffffff;
+    color: #ffffff;
 }
+
 .navbar-default .navbar-nav > li > a {
-  color: #ffffff;
+    color: #ffffff;
 }
+
 .navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-  color: #fdfdfd;
+    color: #fdfdfd;
 }
+
 .navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-  color: #fdfdfd;
-  background-color: #d8d2d1;
+    color: #fdfdfd;
+    background-color: #d8d2d1;
 }
+
 .navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-  color: #fdfdfd;
-  background-color: #d8d2d1;
+    color: #fdfdfd;
+    background-color: #d8d2d1;
 }
+
 .navbar-default .navbar-toggle {
-  border-color: #d8d2d1;
+    border-color: #d8d2d1;
 }
+
 .navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
-  background-color: #d8d2d1;
+    background-color: #d8d2d1;
 }
+
 .navbar-default .navbar-toggle .icon-bar {
-  background-color: #ffffff;
+    background-color: #ffffff;
 }
+
 .navbar-default .navbar-collapse,
 .navbar-default .navbar-form {
-  border-color: #ffffff;
+    border-color: #ffffff;
 }
+
 .navbar-default .navbar-link {
     color: white;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 100;
 }
+
 .navbar-default .navbar-link:hover {
-  color: #fdfdfd;
+    color: #fdfdfd;
 }
 
 @media (max-width: 767px) {
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-    color: #ffffff;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-    color: #fdfdfd;
-  }
-  .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-    color: #fdfdfd;
-    background-color: #d8d2d1;
-  }
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
+        color: #ffffff;
+    }
+
+    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
+        color: #fdfdfd;
+    }
+
+    .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
+        color: #fdfdfd;
+        background-color: #d8d2d1;
+    }
 }
+
 /*body{
     background-image:url("img/Untitled.jpg")
 }*/
-#phone{
-  height: auto;
-  width: auto;
-  max-width: 300px;
-  max-height: 300px;
+#phone {
+    height: auto;
+    width: auto;
+    max-width: 300px;
+    max-height: 300px;
 }
+
 /*End*/
-.navbar-brand
-{
+.navbar-brand {
     position: absolute;
     width: 100%;
     left: 0;
@@ -211,64 +240,77 @@ audio{
     text-align: center;
     margin: auto;
 }
-.landing-brand{
-    color:white;
+
+.landing-brand {
+    color: white;
     font-size: 20px;
     margin-top: 12%;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 100;
     /*include pink font stuff*/
 }
-.landing-text{
-    font-size:15px;
-    margin-top:1%;
+
+.landing-text {
+    font-size: 15px;
+    margin-top: 1%;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 200;
     color: white;
 }
-.form-tabs div{
+
+.form-tabs div {
     font-size: 25px;
 }
-.form-tabs div.active{
+
+.form-tabs div.active {
     font-weight: bold;
     text-decoration: underline;
 }
-.modal .twitter-typeahead{
-        width: 100%;
+
+.modal .twitter-typeahead {
+    width: 100%;
 }
-.panel{
+
+.panel {
     min-height: 100px !Important;
 }
-#prev, #next{
+
+#prev, #next {
     width: 49%;
 }
-.list-group{
+
+.list-group {
     margin-bottom: 0px;
 }
+
 .btn-xlarge {
     padding: 18px 28px;
     font-size: 22px;
     line-height: normal;
     -webkit-border-radius: 8px;
-       -moz-border-radius: 8px;
-            border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
 }
-.btn-lg{
+
+.btn-lg {
     background-color: #fefffd;
     border-color: #676867;
     color: grey;
-        border-color: black;
+    border-color: black;
     border-width: 1px;
 }
-.btn-lg:hover{
+
+.btn-lg:hover {
     background-color: rgb(221, 221, 215);
 }
-.token-link{
+
+.token-link {
     background-color: white;
     color: grey;
     font-weight: 200;
     height: 60%;
 }
+
 body {
     background-size: cover;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -276,45 +318,53 @@ body {
     font-weight: 300;
 }
 
-#form_link{
+#form_link {
     color: white;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 100;
     font-size: 70%;
 }
-#navbar_link{
+
+#navbar_link {
     color: white;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 100;
 }
-#artist-link{
-    color:grey;
+
+#artist-link {
+    color: grey;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 200;
 }
-#base-footer{
+
+#base-footer {
     color: white;
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
     font-weight: 100;
 }
-.loginModal .modal-body{
+
+.loginModal .modal-body {
     text-align: left;
 }
-.loginModal .modal-body #submit, #submit{
+
+.loginModal .modal-body #submit, #submit {
     width: 100%;
 }
-.panel.panel-default.artist-highlight{
+
+.panel.panel-default.artist-highlight {
     background-color: lightcyan;
 }
-.panel.panel-default.artist-highlight a#artist-link{
+
+.panel.panel-default.artist-highlight a#artist-link {
     color: black;
     font-weight: bold;
 }
 
-h1,h2,h3,h4,h5,h6{
+h1, h2, h3, h4, h5, h6 {
     font-weight: 300;
 }
-.navbar-form{
+
+.navbar-form {
     position: absolute;
     right: 1%;
 }

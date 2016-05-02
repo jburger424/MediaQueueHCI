@@ -183,6 +183,23 @@ class Playable(db.Model):
         return '<Playable %r>' % self.url
 
     def get_dict(self):
+        #print(Vote)
+        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url}
+        return dict
+
+class Vote(db.Model):
+    # __tablename__ = 'playable'
+    id = db.Column(db.Integer, primary_key=True)
+    session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
+    playable_id = db.Column(db.Integer, db.ForeignKey('session.id'))
+    added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    value = db.Column(db.Integer())
+    time_modified = db.Column(db.DateTime())
+
+    def __repr__(self):
+        return '<Playable %r>' % self.url
+
+    def get_dict(self):
         dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url}
         return dict
 
@@ -370,15 +387,40 @@ def getUpdate():
 
 @app.route('/session/vote', methods=['POST'])
 def vote():
+    print("Voting")
     jsonData = request.json
     url = jsonData.get('url')
-    vote = jsonData.get('vote')
+    value = jsonData.get('vote')
     playable = Playable.query.filter(
         current_user.session_id == Playable.session_id,
         Playable.url == url
     ).first()
+    user_id = current_user.id
+    vote_obj = Vote.query.filter(
+        user_id == Vote.added_by_id,
+        current_user.session_id == Vote.session_id,
+        Playable.id == Vote.playable_id
+    ).first()
     print("Old Score: " + str(playable.score))
-    playable.score += vote
+    #if user hasn't voted
+    if vote_obj is None:
+        print("voteobj is none")
+        vote_obj = Vote(
+            added_by_id = user_id,
+            playable_id = playable.id,
+            session_id = playable.session_id,
+            value = value
+        )
+        db.session.add(vote_obj)
+        db.session.commit()
+        playable.score += value
+    elif value != vote_obj.value:
+        print(value,vote_obj.value)
+        playable.score -= vote_obj.value
+        vote_obj.value = value
+        playable.score += vote_obj.value
+
+
     print("New Score: " + str(playable.score))
     playable.time_modified = datetime.utcnow()
     # send back success message to js with new tag ID

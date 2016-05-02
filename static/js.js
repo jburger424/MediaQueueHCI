@@ -2,6 +2,7 @@ jQuery(function ($) { // First argument is the jQuery object
     //var vWidth = $(".add-link.input-group").width();
     //var vHeight = vWidth * (9 / 16);
     var startedPlaying = false;
+    var playerReady = false;
     $('#url_form').submit(function (event) {
         event.preventDefault();
         var url = $('.add-link .form-control').val();
@@ -60,15 +61,15 @@ jQuery(function ($) { // First argument is the jQuery object
 
 
         /*$("ul#playables").on('click', 'li', function () {
-            //alert($(this).text());
-            $("ul#playables .active").removeClass("active");
-            $(this).addClass("active");
-            player.loadVideoById({
-                'videoId': $(this).attr("data-url"),
-                'suggestedQuality': 'large'
-            });
+         //alert($(this).text());
+         $("ul#playables .active").removeClass("active");
+         $(this).addClass("active");
+         player.loadVideoById({
+         'videoId': $(this).attr("data-url"),
+         'suggestedQuality': 'large'
+         });
 
-        });*/
+         });*/
 
 // 4. The API will call this function when the video player is ready.
         /* function onPlayerReady(event) {
@@ -77,7 +78,7 @@ jQuery(function ($) { // First argument is the jQuery object
          'videoId': "g4mHPeMGTJM",
          });
          }*/
-        var ready = false;
+
 
         /*function onPlayerReady(event) {
          ready = true;
@@ -85,12 +86,14 @@ jQuery(function ($) { // First argument is the jQuery object
          console.log(player);
          }*/
         function onPlayerReady(event) {
+            playerReady = true;
+            event.target.playVideo();
             //event.target.playVideo();
-            if($("#playables li").length > 0){
-                goToNext();
+            if ($("#playables li").length > 0) {
                 startedPlaying = true;
             }
-            event.target.playVideo();
+            //goToNext()
+
         }
 
 // 5. The API calls this function when the player's state changes.
@@ -118,15 +121,21 @@ jQuery(function ($) { // First argument is the jQuery object
 
         //start queue code
         function goToNext() {
-            //$("#playables li:first").remove();
-            //$("#playables li:first").addClass("active");
-            //$('#now_playing li:first').remove();
-            $('#history').append($("ul#now_playing li:first"));
-            $('#now_playing').append($('#playables li:first'));
-            player.loadVideoById({
-                'videoId': $("ul#now_playing li:first").attr("data-url"),
-                'suggestedQuality': 'large'
-            });
+            if ($("#playables li").length == 0 || !playerReady){
+                console.log("herre");
+                setTimeout(goToNext, 500);
+            }
+            else{
+                console.log("derr");
+                startedPlaying = true;
+                $('#history').append($("ul#now_playing li:first"));
+                $('#now_playing').append($('#playables li:first'));
+                player.loadVideoById({
+                    'videoId': $("ul#now_playing li:first").attr("data-url"),
+                    'suggestedQuality': 'large'
+                });
+            }
+
         }
     }
     else {
@@ -138,6 +147,14 @@ jQuery(function ($) { // First argument is the jQuery object
         //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
         var url = $(this).parent("li").attr("data-url");
         var voteVal = $(this).hasClass("upvote") ? 1 : -1;
+        if($(this).hasClass("clicked")){
+            $(this).toggleClass("clicked");
+            voteVal = 0; //unclicked a vote
+        }
+        else{
+            $(".clicked").removeClass("clicked");
+            $(this).addClass("clicked");
+        }
 
         $.ajax({
             type: "POST",
@@ -175,7 +192,7 @@ jQuery(function ($) { // First argument is the jQuery object
                             playables[i]['url'] + "'>" +
                             "<span class='upvote'>&#x25B2;</span>" +
                             "<span class='downvote'>&#x25BC;</span>" +
-                                "<img src='"+playables[i]['thumb_url']+"' class='img-rounded' width='60' height='45'>"+
+                            "<img src='" + playables[i]['thumb_url'] + "' class='img-rounded' width='60' height='45'>" +
                             "<span class='title'>" + playables[i]['name'] + "</span>" +
                             "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['score']).toString() + "</span>" +
                             "</li>"
@@ -193,11 +210,11 @@ jQuery(function ($) { // First argument is the jQuery object
                     console.log("Adding: " + users[j]['Name']);
                 }
                 //if only 1 playable start
-                if($("#playables li").length == 1 && !startedPlaying){
-                    goToNext();
+                if(!startedPlaying){
                     startedPlaying = true;
-                    event.target.playVideo();
+                    goToNext();
                 }
+
 
             }
         });
@@ -233,10 +250,10 @@ jQuery(function ($) { // First argument is the jQuery object
      sort($(allItems[numItems-i+1]));
      }*/
 
-    $("ul#playables").on("click", "li", function () {
-        console.log('clicked');
-        sort($(this));
-    });
+    /*$("ul#playables").on("click", "li", function () {
+     console.log('clicked');
+     sort($(this));
+     });*/
 
     $("button#sub_new_score").click(function () {
         var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
@@ -261,8 +278,8 @@ jQuery(function ($) { // First argument is the jQuery object
             top = $("ul#playables li").first();
         }
         else if (clickedScore < bottomScore) {
-                top = clicked;
-                clicked = $("ul#playables li").last();
+            top = clicked;
+            clicked = $("ul#playables li").last();
         }
         else {
 
