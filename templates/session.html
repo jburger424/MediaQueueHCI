@@ -9,12 +9,18 @@
     <div class="col-lg-8">
         <form id="url_form">
             <div class="add-link input-group">
-                <input type="text" class="form-control" placeholder="Add Youtube URL">
+                <input type="text" class="form-control" placeholder="Search Query or Youtube URL">
       <span class="input-group-btn">
         <button class="btn btn-default" type="submit">+</button>
       </span>
             </div><!-- /input-group -->
         </form>
+          <div id="vid-search" class="input-group">
+    <input type="text" class="form-control" placeholder="Search for...">
+      <span class="input-group-btn">
+        <button class="search btn btn-default" type="button"  data-toggle="modal" data-target=".search_modal">Go!</button>
+      </span>
+  </div><!-- /input-group -->
 
         <div id="player"></div>
         <script>
@@ -57,5 +63,18 @@
         </ul>
 
     </div>
+    <div class="search_modal modal fade" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <ul id="search_results">
+        <li>
+          <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width = 120 height = 90 />
+          <span>Title</span>
+
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
 
 {% endblock %}

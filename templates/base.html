@@ -33,12 +33,15 @@
                 <ul class="nav navbar-nav navbar">
                     <li><a>{{ current_user.name }}</a></li>
                 </ul>
+
             {% else %}
 
             {% endif %}
+
+
             <ul class="nav navbar-nav navbar-right">
-            <!--<ul class="nav navbar-nav navbar-right">-->
-            {% if current_user.is_authenticated and not current_user.is_anonymous %}
+                <!--<ul class="nav navbar-nav navbar-right">-->
+                {% if current_user.is_authenticated and not current_user.is_anonymous %}
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
@@ -48,10 +51,10 @@
                             <li><b>History</b></li>
                         </ul>
                     </li>
-            {% else %}
-                Something
-            {% endif %}
-            {% if current_user.is_authenticated and not current_user.is_anonymous %}
+                {% else %}
+                    Something
+                {% endif %}
+                {% if current_user.is_authenticated and not current_user.is_anonymous %}
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false"><i class="fa fa-users" aria-hidden="true"></i><span
@@ -63,14 +66,15 @@
                             {% endfor %}
                         </ul>
                     </li>
-            {% else %}
-                <ul class="nav navbar-nav navbar-left">
-                    <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
-                        class="row">
-                        <a class="navbar-link" href="/login/">Log In</a>
-                    </li>
-                </ul>
-            {% endif %}
+                {% else %}
+                    <ul class="nav navbar-nav navbar-left">
+                        <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
+                            class="row">
+                            <a class="navbar-link" href="/login/">Log In</a>
+                        </li>
+                    </ul>
+                {% endif %}
+
             </ul>
 
             <!-- </ul>-->
