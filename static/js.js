@@ -196,8 +196,9 @@ jQuery(function ($) { // First argument is the jQuery object
                 if($("#playables li").length == 1 && !startedPlaying){
                     goToNext();
                     startedPlaying = true;
+                    event.target.playVideo();
                 }
-                event.target.playVideo();
+
             }
         });
     }

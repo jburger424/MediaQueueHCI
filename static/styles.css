@@ -9,6 +9,7 @@
 ul#users, ul#history {
     padding: 0px;
 }
+
 #now_playing b {
     background: hsla(45,100%,45%,1);
 }
@@ -18,6 +19,7 @@ ul#users, ul#history {
     background: whitesmoke;
     border-color: #FFCA28;
     border-width: 5px;
+    border-radius: 0px;
 }
 span.upvote, span.downvote {
     font-size: 1.8em;

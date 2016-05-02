@@ -167,7 +167,7 @@ class Session(db.Model):
     def __repr__(self):
         return '<Session %r>' % self.name
 
-
+#TODO add was_played boolean so pages can be built and updated with accurate history
 class Playable(db.Model):
     # __tablename__ = 'playable'
     id = db.Column(db.Integer, primary_key=True)
