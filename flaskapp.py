@@ -403,7 +403,7 @@ def vote():
     vote_obj = Vote.query.filter(
         user_id == Vote.added_by_id,
         current_user.session_id == Vote.session_id,
-        Playable.id == Vote.playable_id
+        playable.id == Vote.playable_id
     ).first()
     print("Old Score: " + str(playable.score))
     #if user hasn't voted

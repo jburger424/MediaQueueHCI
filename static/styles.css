@@ -2,6 +2,9 @@
     padding-right: 0;
     padding-left: 0;
 }
+#now_playing span.upvote,  #now_playing span.downvote {
+    opacity: 0;
+}
 
 .navbar-header {
     position: relative;

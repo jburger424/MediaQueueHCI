@@ -152,7 +152,7 @@ jQuery(function ($) { // First argument is the jQuery object
             voteVal = 0; //unclicked a vote
         }
         else{
-            $(".clicked").removeClass("clicked");
+            $(this).parent().children(".clicked").removeClass("clicked");
             $(this).addClass("clicked");
         }
 
@@ -168,7 +168,7 @@ jQuery(function ($) { // First argument is the jQuery object
             dataType: "json"
         });
         update();
-        sort($(this).parent("li")).delay(400);
+        sort($(this).parent("li"));//.delay(400);
     });
     function update() {
         //console.log("updating");
@@ -201,7 +201,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     else {
                         listItem.find(".score").text(score);
                     }
-                    $(listItem).find(".clicked").removeClass("clicked");
+                    $(listItem).children(".clicked").removeClass("clicked");
                     if(playables[i]['user_vote'] > 0){
                         $(listItem).find(".upvote").addClass("clicked")
                     }
@@ -209,7 +209,6 @@ jQuery(function ($) { // First argument is the jQuery object
                         $(listItem).find(".downvote").addClass("clicked")
                     }
                     sort(listItem);
-
                     console.log("Adding: " + playables[i]['name'] + " with score" + playables[i]['score']);
                 }
                 for (var j in users) {
