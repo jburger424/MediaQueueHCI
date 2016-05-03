@@ -100,10 +100,31 @@ jQuery(function ($) { // First argument is the jQuery object
             }
         }
 
+        //start queue code
+        function goToNext() {
+            if (($("#playables li").length == 0 && $("#now_playing li").length == 0) || !playerReady) {
+                setTimeout(goToNext, 500);
+            }
+            else {
+                if (startedPlaying && $("#playables li").length > 0) {
+                    $('#history').append($("ul#now_playing li:first"));
+                    $('#now_playing').append($('#playables li:first'));
+                }
+
+                var vid_id = $("ul#now_playing li:first").attr("data-url");
+                startedPlaying = true;
+
+                player.loadVideoById({
+                    'videoId': vid_id,
+                    'suggestedQuality': 'large'
+                });
+                updatePlayableState(vid_id, "playing");
+            }
+
+        }
 
         if (findBootstrapEnvironment() == "lg") {
             console.log("if");
-
             var player;
             var vWidth = $(".add-link.input-group").width();
             var vHeight = vWidth * (9 / 16);
@@ -122,6 +143,7 @@ jQuery(function ($) { // First argument is the jQuery object
 
 // 4. The API will call this function when the video player is ready.
             function onPlayerReady(event) {
+                console.log("player ready");
                 playerReady = true;
                 event.target.playVideo();
                 //event.target.playVideo();
@@ -150,33 +172,12 @@ jQuery(function ($) { // First argument is the jQuery object
                 player.stopVideo();
             }
 
-            //start queue code
-            function goToNext() {
-                if (($("#playables li").length == 0 && $("#now_playing li").length == 0) || !playerReady) {
-                    setTimeout(goToNext, 500);
-                }
-                else {
-                    if (startedPlaying && $("#playables li").length > 0) {
-                        $('#history').append($("ul#now_playing li:first"));
-                        $('#now_playing').append($('#playables li:first'));
-                    }
 
-                    var vid_id = $("ul#now_playing li:first").attr("data-url");
-                    startedPlaying = true;
-
-                    player.loadVideoById({
-                        'videoId': vid_id,
-                        'suggestedQuality': 'large'
-                    });
-                    updatePlayableState(vid_id, "playing");
-                }
-
-            }
         }
-
         else {
             console.log("else");
         }
+
 
         $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
             console.log("VOTE!");
