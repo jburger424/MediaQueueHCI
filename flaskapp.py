@@ -21,6 +21,7 @@ from flask.ext.login import LoginManager, UserMixin, AnonymousUserMixin, login_r
 # TODO: Make seperate distinct pages for create station join station
 # TODO: URL/Query switching button on input bar
 # TODO: mobile format, large sticky search bar at bottom, possibly desktop too
+#TODO: history fix
 # TODO:Clean up code thoroughly
 
 basedir = os.path.abspath(os.path.dirname(__file__))
@@ -205,9 +206,6 @@ def join_session(url_hex_key):
 
 @app.route('/', methods=['GET', 'POST'])
 def new_session():
-    print(YOUTUBE_API_KEY)
-    print("session created")
-
     nicknameForm = NicknameForm()
     if nicknameForm.validate_on_submit():
 
@@ -226,9 +224,6 @@ def new_session():
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        users = User.query.filter_by(session_id=session.id).all()
-        print(session.hex_key)
-        print(current_user.is_authenticated)
         return redirect("/session/" + session_hex)
     return render_template('create_session.html', nicknameForm=nicknameForm)
 
