@@ -41,7 +41,7 @@ jQuery(function ($) { // First argument is the jQuery object
 
         function query(query) {
             //var query = $("#vid-search input").val();
-            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&kind=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
+            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
             $("ul#search_results").empty();
             $.ajax({
                 type: "GET",
@@ -54,7 +54,6 @@ jQuery(function ($) { // First argument is the jQuery object
                     var items = data['items'];
                     console.log(items);
                     for (var i in items) {
-                        var result_kind = items[i]
                         var vid_id = items[i]['id']['videoId'];
                         var name = items[i]['snippet']['title'];
                         var img_url = items[i]['snippet']['thumbnails']['default']['url'];
