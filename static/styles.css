@@ -2,38 +2,53 @@
     padding-right: 0;
     padding-left: 0;
 }
+
+li.clearfix.list-group-item {
+    background: #C8C8D4;
+}
+
+#now_playing li.clearfix.list-group-item {
+    background: #C8C8D4;
+}
+
+body {
+    background: #C6C5EA;
+}
+
 .search_modal ul#search_results {
-  list-style: none;
+    list-style: none;
 }
 
 .search_modal li {
-  position: relative;
-  padding: 5px 0px;
+    position: relative;
+    padding: 5px 0px;
 }
 
 .search_modal ul li span {
-  width: 60%;
-  display: block;
-  float: right;
+    width: 60%;
+    display: block;
+    float: right;
 }
 
 .search_modal img {
-  max-width: 30%;
-}
-.search_modal .add {
-  text-align: center;
-  width: 50px;
-  height: 50px;
-  background: green;
-  line-height: 38px;
-  font-size: 50px;
-  color: white;
-}
-.navbar-default {
-        background-color: #3F3CCC !Important;
-    border-color: #d8d2d1 !Important;
+    max-width: 30%;
 }
 
+.search_modal .add {
+    text-align: center;
+    width: 50px;
+    height: 50px;
+    background: green;
+    line-height: 38px;
+    font-size: 50px;
+    color: white;
+}
+
+.navbar-default {
+    background-color: #49479A !Important;
+    border-width: 0px;
+    border-radius: 0px;
+}
 
 #playables b {
     font-weight: 400;
@@ -42,9 +57,16 @@
     background: #6A68E2;
     color: #E0E0E0;
 }
-#now_playing span.upvote,  #now_playing span.downvote, #now_playing span.score {
+
+ul#playables {
+    background: #E5E5F3;
+    height: 330px;
+}
+
+#now_playing span.upvote, #now_playing span.downvote, #now_playing span.score {
     display: none;
 }
+
 #now_playing img.img-rounded {
     width: 120px;
     height: 90px;
@@ -52,12 +74,11 @@
     float: left;
     margin-left: 5px;
 }
-.col-lg-8{
-    padding-right: 0px;
+
+.col-lg-8, .col-lg-4 {
+    padding: 0px;
 }
-.col-lg-4{
-    padding-left: 0px;
-}
+
 .navbar-header {
     position: relative;
     z-index: 100;
@@ -70,7 +91,7 @@ ul#users, ul#history {
 #now_playing b {
     height: 35px;
     line-height: 30px;
-    background: #3F3CCC;
+    background: #6867B2;
     color: white;
     /* border-width: 0px; */
 }
@@ -81,6 +102,7 @@ ul#users, ul#history {
     border-radius: 0px;
     background: #A8A6F6;
 }
+
 #now_playing li.list-group-item {
 
 }
@@ -148,14 +170,16 @@ ul b {
     background: #C1C1C1;
     padding: 4px;
 }
+
 .session_info ul li {
 
 }
+
 .session_info ul li {
     display: block;
     border-style: solid;
     border-width: 1px 0px 0px;
-        padding: 5px 0px;
+    padding: 5px 0px;
     background: #BCBAF3;
     border-color: #3F3CCC;
     /* cursor: -webkit-zoom-in; */
@@ -206,7 +230,6 @@ audio {
 }
 
 /*Lauren's*/
-
 
 .navbar-default .navbar-brand {
     color: #ffffff;
