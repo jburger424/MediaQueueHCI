@@ -3,6 +3,19 @@ jQuery(function ($) { // First argument is the jQuery object
     //var vHeight = vWidth * (9 / 16);
     var startedPlaying = false;
     var playerReady = false;
+    function updatePlayableState(playable_url,state){
+        $.ajax({
+            type: "POST",
+            contentType: "application/json; charset=utf-8",
+            url: "/session/state",
+            data: JSON.stringify({url: url, vote: voteVal}),
+            success: function (data) {
+                console.log("New Score: " + data.new_score);
+                //console.log(data.article);
+            },
+            dataType: "json"
+        });
+    }
     function addVidUrl(url){
         $.ajax({
             type: "POST",

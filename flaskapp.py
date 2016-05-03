@@ -98,6 +98,7 @@ class Playable(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer(), unique=False)
+    state = db.Column(db.String(256), unique=False)
     time_modified = db.Column(db.DateTime())
 
     def __repr__(self):
@@ -245,7 +246,8 @@ def addPlayable():
                                 added_by_id=current_user.id,
                                 score=0,
                                 name=playable_name,
-                                thumb_url=thumb_url
+                                thumb_url=thumb_url,
+                                state="unplayed"
                                 )
             playable.time_modified = datetime.utcnow()
             print(playable.time_modified)
@@ -321,11 +323,20 @@ def vote():
         vote_obj.value = value
         playable.score += vote_obj.value
 
-
-    print("New Score: " + str(playable.score))
+@app.route('/session/state', methods=['POST'])
+def update_state():
+    print("State Change")
+    #states: unplayed, playing, played
+    jsonData = request.json
+    playable_url = jsonData.get('playable_url')
+    state = jsonData.get('state')
+    playable = Playable.query.filter(
+        current_user.session_id == Playable.session_id,
+        Playable.url == playable_url
+    ).first()
+    playable.state = state
     playable.time_modified = datetime.utcnow()
-    # send back success message to js with new tag ID
-    return json.dumps({'success': True, 'new_score': playable.score}), 200, {'ContentType': 'application/json'}
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 #will run program on 0.0.0.0 computer's local ip address
 if __name__ == '__main__':
