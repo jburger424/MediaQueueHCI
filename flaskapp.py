@@ -113,9 +113,9 @@ class Playable(db.Model):
             return 0
         else:
             return vote_obj.value
-    def get_dict(self):
 
-        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url, 'user_vote':self.user_vote()}
+    def get_dict(self):
+        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url, 'user_vote':self.user_vote(), 'state':self.state}
         return dict
 
 class Vote(db.Model):

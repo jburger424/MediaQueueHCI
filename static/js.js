@@ -8,9 +8,9 @@ jQuery(function ($) { // First argument is the jQuery object
             type: "POST",
             contentType: "application/json; charset=utf-8",
             url: "/session/state",
-            data: JSON.stringify({url: url, vote: voteVal}),
+            data: JSON.stringify({playable_url: playable_url, state: state}),
             success: function (data) {
-                console.log("New Score: " + data.new_score);
+                //console.log("New Score: " + data.new_score);
                 //console.log(data.article);
             },
             dataType: "json"
@@ -137,6 +137,8 @@ jQuery(function ($) { // First argument is the jQuery object
             if (event['data'] == 0) {
                 console.log("video_ended");
                 goToNext();
+                var vid_id = $("ul#now_playing li:first").attr("data-url");
+                updatePlayableState(vid_id,"played");
             }
         }
 
@@ -155,10 +157,12 @@ jQuery(function ($) { // First argument is the jQuery object
                 startedPlaying = true;
                 $('#history').append($("ul#now_playing li:first"));
                 $('#now_playing').append($('#playables li:first'));
+                var vid_id = $("ul#now_playing li:first").attr("data-url");
                 player.loadVideoById({
-                    'videoId': $("ul#now_playing li:first").attr("data-url"),
+                    'videoId': vid_id,
                     'suggestedQuality': 'large'
                 });
+                updatePlayableState(vid_id,"playing");
             }
 
         }
@@ -209,11 +213,17 @@ jQuery(function ($) { // First argument is the jQuery object
                 for (var i in playables) {
                     var url = playables[i]['url'];
                     var score = playables[i]['score'];
+                    var state = playables[i]['state'];
 
                     //sees if this url already exists in list
                     var listItem = $("li.list-group-item[data-url='" + url + "']");
                     if (!listItem.length) {
-                        $("#playables").append("<li class='clearfix list-group-item' data-url='" +
+                        var appendTo = $("#playables");
+                        if(state=="playing")
+                            appendTo = $("#now_playing");
+                        else if(state == "played")
+                            appendTo = $("#history");
+                        $(appendTo).append("<li class='clearfix list-group-item' data-url='" +
                             playables[i]['url'] + "'>" +
                             "<span class='upvote'>&#x25B2;</span>" +
                             "<span class='downvote'>&#x25BC;</span>" +
@@ -223,8 +233,15 @@ jQuery(function ($) { // First argument is the jQuery object
                             "</li>"
                         );
                     }
+                    //if it already exists, update the score, check that it's in the right place
                     else {
                         listItem.find(".score").text(score);
+                        if(state=="playing" && listItem.parent().hasClass("playables")){
+                            $("#now_playing").append(listItem);
+                        }
+                        if(state=="played" && (listItem.parent().hasClass("playables") || listItem.parent().hasClass("now_playing")){
+                            $("#history").append(listItem);
+                        }
                     }
                     $(listItem).children(".clicked").removeClass("clicked");
                     if (playables[i]['user_vote'] > 0) {
