@@ -196,11 +196,13 @@ jQuery(function ($) { // First argument is the jQuery object
             },
             dataType: "json"
         });
-        update();
-        sort($(this).parent("li")).delay(400);
+        console.log("this: ");
+        console.log($(this));
+        //update();
+        if($("#playables li").length > 1)
+            sort($(this).parent());
     });
     function update() {
-        //console.log("updating");
         $.ajax({
             type: "GET",
             url: "/session/update/",
@@ -208,8 +210,6 @@ jQuery(function ($) { // First argument is the jQuery object
             success: function (data) {
                 var users = data['users'];
                 var playables = data['playables'];
-                //console.log(users);
-                //console.log(playables);
                 for (var i in playables) {
                     var url = playables[i]['url'];
                     var score = playables[i]['score'];
@@ -218,6 +218,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     //sees if this url already exists in list
                     var listItem = $("li.list-group-item[data-url='" + url + "']");
                     if (!listItem.length) {
+                        console.log("don't exist");
                         var appendTo = $("#playables");
                         if(state=="playing")
                             appendTo = $("#now_playing");
@@ -235,11 +236,12 @@ jQuery(function ($) { // First argument is the jQuery object
                     }
                     //if it already exists, update the score, check that it's in the right place
                     else {
+                        console.log("updating score");
                         listItem.find(".score").text(score);
                         if(state=="playing" && listItem.parent().hasClass("playables")){
                             $("#now_playing").append(listItem);
                         }
-                        if(state=="played" && (listItem.parent().hasClass("playables") || listItem.parent().hasClass("now_playing")){
+                        if(state=="played" && (listItem.parent().hasClass("playables") || listItem.parent().hasClass("now_playing"))){
                             $("#history").append(listItem);
                         }
                     }
@@ -258,7 +260,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     console.log("Adding: " + users[j]['Name']);
                 }
                 //if only 1 playable start
-                if (!startedPlaying) {
+                if (!startedPlaying && findBootstrapEnvironment() == "lg"){
                     startedPlaying = true;
                     goToNext();
                 }

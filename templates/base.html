@@ -53,6 +53,24 @@
                                 class="caret"></span></a>
                         <ul id="history" class="dropdown-menu">
                             <li><b>History</b></li>
+                                        {% for playable in playables %}
+                {% if playable.state == "played" %}
+                <li class="clearfix list-group-item" data-url="{{ playable.url }}">
+                        <span class="upvote {% if playable.user_vote() > 0 %}clicked{% endif %}">
+                            &#x25B2;
+                        </span>
+                        <span class="downvote {% if playable.user_vote() < 0 %}clicked{% endif %}">
+                            &#x25BC;
+                        </span>
+                    <img src='{{ playable.thumb_url }}' class='img-rounded' width='60' height='45'>
+                    <span class="title">{{ playable.name }}</span>
+                    <span class="score label label-default label-pill pull-xs-right">{{ playable.score }}</span>
+
+
+                </li>
+                {% endif %}
+
+            {% endfor %}
                         </ul>
                     </li>
                 {% else %}

@@ -4,6 +4,7 @@ import re
 import requests
 from keys import YOUTUBE_API_KEY
 from datetime import datetime
+from datetime import timedelta
 from random import randint
 import uuid
 from flask import Flask, render_template, send_from_directory, flash, json, Response, request, redirect, url_for, \
@@ -177,7 +178,7 @@ def join_session(url_hex_key):
         db.session.commit()
         login_user(user)
         users = User.query.filter_by(session_id=session.id).all()
-        playables = Playable.query.filter_by(session_id=session.id).order_by(Playable.score)
+        playables = Playable.query.filter(session_id=session.id).order_by(Playable.score)
         return render_template('session.html', users=users, playables=playables)
 
     return render_template('create_session.html', nicknameForm=joinForm)
@@ -279,10 +280,11 @@ def getUpdate():
         )
     except:
         print("Unexpected User error:", sys.exc_info()[0])
-    current_user.time_updated = datetime.utcnow()
     users = [user.get_dict() for user in users]
     playables = [playable.get_dict() for playable in playables]
     dict = {'users': users, 'playables': playables}
+    time = datetime.utcnow() - timedelta(seconds=1)
+    current_user.time_updated = time
     print(users)
 
     return Response(json.dumps(dict), mimetype='application/json')
@@ -322,6 +324,8 @@ def vote():
         playable.score -= vote_obj.value
         vote_obj.value = value
         playable.score += vote_obj.value
+    playable.time_modified = datetime.utcnow()
+    return json.dumps({'success': True, 'new_score': playable.score}), 200, {'ContentType': 'application/json'}
 
 @app.route('/session/state', methods=['POST'])
 def update_state():
