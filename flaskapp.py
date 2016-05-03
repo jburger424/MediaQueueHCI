@@ -4,6 +4,7 @@ import re
 import requests
 from keys import YOUTUBE_API_KEY
 from datetime import datetime
+from datetime import timedelta
 from random import randint
 import uuid
 from flask import Flask, render_template, send_from_directory, flash, json, Response, request, redirect, url_for, \
@@ -17,11 +18,10 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager, UserMixin, AnonymousUserMixin, login_required, login_user, logout_user, \
     current_user
 
-#TODO: Make seperate distinct pages for create station join station
-#TODO: JS to send server when video starts and ends so now playing and video history can update on update
-#TODO: URL/Query switching button on input bar
-#TODO: mobile format, large sticky search bar at bottom, possibly desktop too
-#TODO:Clean up code thoroughly
+# TODO: Make seperate distinct pages for create station join station
+# TODO: URL/Query switching button on input bar
+# TODO: mobile format, large sticky search bar at bottom, possibly desktop too
+# TODO:Clean up code thoroughly
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -88,7 +88,8 @@ class Session(db.Model):
     def __repr__(self):
         return '<Session %r>' % self.name
 
-#TODO add was_played boolean so pages can be built and updated with accurate history
+
+# TODO add was_played boolean so pages can be built and updated with accurate history
 class Playable(db.Model):
     # __tablename__ = 'playable'
     id = db.Column(db.Integer, primary_key=True)
@@ -98,10 +99,12 @@ class Playable(db.Model):
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     added_by_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     score = db.Column(db.Integer(), unique=False)
+    state = db.Column(db.String(256), unique=False)
     time_modified = db.Column(db.DateTime())
 
     def __repr__(self):
         return '<Playable %r>' % self.url
+
     def user_vote(self):
         vote_obj = Vote.query.filter(
             current_user.id == Vote.added_by_id,
@@ -112,10 +115,12 @@ class Playable(db.Model):
             return 0
         else:
             return vote_obj.value
-    def get_dict(self):
 
-        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url, 'user_vote':self.user_vote()}
+    def get_dict(self):
+        dict = {'url': self.url, 'score': self.score, 'name': self.name, 'thumb_url': self.thumb_url,
+                'user_vote': self.user_vote(), 'state': self.state}
         return dict
+
 
 class Vote(db.Model):
     # __tablename__ = 'playable'
@@ -128,6 +133,7 @@ class Vote(db.Model):
 
     def __repr__(self):
         return '<Playable %r>' % self.url
+
 
 class NicknameForm(Form):
     # artistName = StringField('Artist Name*', validators=[Required()])
@@ -162,8 +168,25 @@ def join_session(url_hex_key):
 
     # could reduce this logic
     if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
-        playables = Playable.query.filter_by(session_id=session.id).order_by(Playable.score.desc())
-        return render_template('session.html', users=users, playables=playables)
+        playables_unplayed = Playable.query.filter(
+            Playable.session_id == session.id,
+            Playable.state == "unplayed"
+        ).order_by(Playable.score)
+        playables_played = Playable.query.filter(
+            Playable.session_id == session.id,
+            Playable.state == "played"
+        ).order_by(Playable.time_modified)
+        print("playables_played", playables_played)
+        playable_playing = Playable.query.filter(
+            Playable.session_id == session.id,
+            Playable.state == "playing"
+        ).first()
+        return render_template('session.html',
+                           users=users,
+                           playables_unplayed=playables_unplayed,
+                           playables_played=playables_played,
+                           playable_playing=playable_playing
+                           )
     if joinForm.validate_on_submit():
         name = joinForm.name.data
         session = Session.query.filter_by(hex_key=url_hex_key).first()
@@ -175,9 +198,7 @@ def join_session(url_hex_key):
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        users = User.query.filter_by(session_id=session.id).all()
-        playables = Playable.query.filter_by(session_id=session.id).order_by(Playable.score)
-        return render_template('session.html', users=users, playables=playables)
+        return redirect("/session/" + url_hex_key)
 
     return render_template('create_session.html', nicknameForm=joinForm)
 
@@ -226,7 +247,7 @@ def addPlayable():
         else:
             playable_url = split_playable_url[split_playable_url.index("/") + 1]
     # getting name and thumbnail from youtube
-    if(len(playable_url) == 11):
+    if (len(playable_url) == 11):
         playable = Playable.query.filter(
             current_user.session_id == Playable.session_id,
             Playable.url == playable_url
@@ -245,7 +266,8 @@ def addPlayable():
                                 added_by_id=current_user.id,
                                 score=0,
                                 name=playable_name,
-                                thumb_url=thumb_url
+                                thumb_url=thumb_url,
+                                state="unplayed"
                                 )
             playable.time_modified = datetime.utcnow()
             print(playable.time_modified)
@@ -254,7 +276,8 @@ def addPlayable():
             newPlayableID = Playable.query.filter_by(url=playable_url).first().id
             # send back success message to js with new tag ID
             return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
-    return json.dumps({'result': 'error'}), 400, {'ContentType': 'application/json'} #TODO give differenent response if already added
+    return json.dumps({'result': 'error'}), 400, {
+        'ContentType': 'application/json'}  # TODO give differenent response if already added
 
 
 @app.route('/session/update/', methods=['GET'])
@@ -277,10 +300,11 @@ def getUpdate():
         )
     except:
         print("Unexpected User error:", sys.exc_info()[0])
-    current_user.time_updated = datetime.utcnow()
     users = [user.get_dict() for user in users]
     playables = [playable.get_dict() for playable in playables]
     dict = {'users': users, 'playables': playables}
+    time = datetime.utcnow() - timedelta(seconds=1)
+    current_user.time_updated = time
     print(users)
 
     return Response(json.dumps(dict), mimetype='application/json')
@@ -303,31 +327,52 @@ def vote():
         playable.id == Vote.playable_id
     ).first()
     print("Old Score: " + str(playable.score))
-    #if user hasn't voted
+    # if user hasn't voted
     if vote_obj is None:
         print("voteobj is none")
         vote_obj = Vote(
-            added_by_id = user_id,
-            playable_id = playable.id,
-            session_id = playable.session_id,
-            value = value
+            added_by_id=user_id,
+            playable_id=playable.id,
+            session_id=playable.session_id,
+            value=value
         )
         db.session.add(vote_obj)
         db.session.commit()
         playable.score += value
     elif value != vote_obj.value:
-        print(value,vote_obj.value)
+        print(value, vote_obj.value)
         playable.score -= vote_obj.value
         vote_obj.value = value
         playable.score += vote_obj.value
-
-
-    print("New Score: " + str(playable.score))
     playable.time_modified = datetime.utcnow()
-    # send back success message to js with new tag ID
     return json.dumps({'success': True, 'new_score': playable.score}), 200, {'ContentType': 'application/json'}
 
-#will run program on 0.0.0.0 computer's local ip address
+
+@app.route('/session/state', methods=['POST'])
+def update_state():
+    print("State Change")
+    # states: unplayed, playing, played
+    jsonData = request.json
+    playable_url = jsonData.get('playable_url')
+    state = jsonData.get('state')
+    # never more than one playing at a time
+    if state == "playing":
+        playables_playing = Playable.query.filter(
+            current_user.session_id == Playable.session_id,
+            state == "playing"
+        ).all()
+        for playable in playables_playing:
+            playable.state = "played"
+    playable = Playable.query.filter(
+        current_user.session_id == Playable.session_id,
+        Playable.url == playable_url
+    ).first()
+    playable.state = state
+    playable.time_modified = datetime.utcnow()
+    return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+
+
+# will run program on 0.0.0.0 computer's local ip address
 if __name__ == '__main__':
     manager.add_command("runserver", Server(
         use_debugger=True,
