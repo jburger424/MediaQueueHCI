@@ -86,10 +86,12 @@ jQuery(function ($) { // First argument is the jQuery object
 
     if (findBootstrapEnvironment() == "lg") {
         console.log("if");
-
+        //TODO: start with and iframe instead of a div so no width or height automatically added
         var player;
         var vWidth = $(".add-link.input-group").width();
         var vHeight = vWidth * (9 / 16);
+
+        $()
         window.onYouTubePlayerAPIReady = function () {
             console.log("something working");
             player = new YT.Player('player', {
