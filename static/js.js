@@ -238,11 +238,16 @@ jQuery(function ($) { // First argument is the jQuery object
                     else {
                         console.log("updating score");
                         listItem.find(".score").text(score);
-                        if(state=="playing" && listItem.parent().hasClass("playables")){
+                        console.log(listItem.find(".title").text());
+                        console.log(state);
+                        console.log();
+                        if(state=="playing" && listItem.parent().is("#playables")){
+                            console.log("condition 1");
                             $("#now_playing").append(listItem);
                         }
-                        if(state=="played" && (listItem.parent().hasClass("playables") || listItem.parent().hasClass("now_playing"))){
+                        if(state=="played" && (listItem.parent().is("#playables") || listItem.parent().is("#now_playing"))){
                             $("#history").append(listItem);
+                            console.log("condition 2");
                         }
                     }
                     $(listItem).children(".clicked").removeClass("clicked");
