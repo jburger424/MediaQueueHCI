@@ -19,7 +19,6 @@ from flask.ext.login import LoginManager, UserMixin, AnonymousUserMixin, login_r
     current_user
 
 # TODO: Make seperate distinct pages for create station join station
-# TODO: JS to send server when video starts and ends so now playing and video history can update on update
 # TODO: URL/Query switching button on input bar
 # TODO: mobile format, large sticky search bar at bottom, possibly desktop too
 # TODO:Clean up code thoroughly
