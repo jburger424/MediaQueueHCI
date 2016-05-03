@@ -13,18 +13,18 @@ jQuery(function ($) { // First argument is the jQuery object
                 //console.log(data.title);
                 //console.log(data.article);
             },
+            //figure out better way to do this
+            error: function(data) {
+                console.log("error");
+                console.log(data);
+                query(url);
+            },
             dataType: "json"
         });
         update();
     }
-    $('#url_form').submit(function (event) {
-        event.preventDefault();
-        var url = $('.add-link .form-control').val();
-        addVidUrl(url);
-        $(".add-link input.form-control").val("");
-    });
-      $("#vid-search button").click(function () {
-    var query = $("#vid-search input").val();
+    function query(query) {
+    //var query = $("#vid-search input").val();
     var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
     $("ul#search_results").empty();
     $.ajax({
@@ -33,7 +33,7 @@ jQuery(function ($) { // First argument is the jQuery object
       dataType: "json", // Set the data type so jQuery can parse it for you
       success: function (data) {
         $("ul#search_results h2").remove();
-        $("ul#search_results").prepend("<h2>Results for "+query+"</h2>");
+        $("ul#search_results").prepend("<h2>Results for '"+query+"'</h2>");
 
         var items = data['items'];
         console.log(items);
@@ -42,18 +42,29 @@ jQuery(function ($) { // First argument is the jQuery object
           var name = items[i]['snippet']['title'];
           var img_url = items[i]['snippet']['thumbnails']['default']['url'];
           console.log("name: " + name + " id: " + vid_id+ " img: "+img_url);
-          $("ul#search_results").append("<li data-vid='"+vid_id+"'> <img src='" +
+          $("ul#search_results").append("<li class='row' data-vid='"+vid_id+"'><div class='col-md-4'><img src='" +
               img_url +
-              "' width = 120 height = 90 /> <div class='add'>+</div> <span>" +
-              name +
-              "</span></li>");
+              "' class='img-responsive' /></div>"+
+                  "<div class='col-md-6'>"+name+"</div>"+
+              "<div class='col-md-2 add'>+</div> <span> </li>");
         }
+          $('.search_modal.modal.fade').modal('show');
       }
     });
-  });
+
+  }
+    $('#url_form').submit(function (event) {
+        event.preventDefault();
+        var url = $('.add-link .form-control').val();
+        addVidUrl(url);
+        $(".add-link input.form-control").val("");
+    });
+      $("#vid-search button").click();
+    //add button next to items in search
     $("ul#search_results").on('click', 'li div.add', function () {
         console.log($(this).parent("li").attr("data-vid"));
         addVidUrl($(this).parent("li").attr("data-vid"));
+        $('.search_modal.modal.fade').modal('hide');
     });
     function findBootstrapEnvironment() {
         var envs = ['xs', 'sm', 'md', 'lg'];
