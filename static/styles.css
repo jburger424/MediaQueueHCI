@@ -257,7 +257,10 @@ body {
   color: #fdfdfd;
 }
 .navbar-default .navbar-brand, .navbar-default .navbar-text {
-  color: #ffffff;
+        font-family: sans-serif;
+    font-size: 40px;
+    font-weight: bold;
+    color: #F3C10D;
 }
 .navbar-default .navbar-nav > li > a {
   color: #ffffff;
