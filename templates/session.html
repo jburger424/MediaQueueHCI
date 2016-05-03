@@ -7,20 +7,7 @@
 
 
     <div class="col-lg-8">
-        <form id="url_form">
-            <div class="add-link input-group">
-                <input type="text" class="form-control" placeholder="Search Query or Youtube URL">
-      <span class="input-group-btn">
-        <button class="btn btn-default" type="submit">+</button>
-      </span>
-            </div><!-- /input-group -->
-        </form>
-          <div id="vid-search" class="input-group">
-    <input type="text" class="form-control" placeholder="Search for...">
-      <span class="input-group-btn">
-        <button class="search btn btn-default" type="button"  data-toggle="modal" data-target=".search_modal">Go!</button>
-      </span>
-  </div><!-- /input-group -->
+
 
         <div id="player"></div>
         <script>
@@ -35,7 +22,17 @@
             //    after the API code downloads.
 
         </script>
-        <!--TODO take this out of the html file-->
+            <form id="url_form">
+            <div class="add-link input-group">
+                <input type="text" class="form-control" placeholder="Search Query or Youtube URL">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="submit">+</button>
+      </span>
+            </div><!-- /input-group -->
+        </form>
+
+
+
     </div><!-- /.col-lg-8 -->
 
     <div class="col-lg-4 session_info">
@@ -46,10 +43,10 @@
             <b>Up Next</b>
             {% for playable in playables %}
                 <li class="clearfix list-group-item" data-url="{{ playable.url }}">
-                        <span class="upvote {% if playable.user_vote() > 0 %}clicked{%  endif %}">
+                        <span class="upvote {% if playable.user_vote() > 0 %}clicked{% endif %}">
                             &#x25B2;
                         </span>
-                        <span class="downvote {% if playable.user_vote() < 0 %}clicked{%  endif %}">
+                        <span class="downvote {% if playable.user_vote() < 0 %}clicked{% endif %}">
                             &#x25BC;
                         </span>
                     <img src='{{ playable.thumb_url }}' class='img-rounded' width='60' height='45'>
@@ -64,17 +61,17 @@
 
     </div>
     <div class="search_modal modal fade" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-lg">
-    <div class="modal-content">
-      <ul id="search_results">
-        <li>
-          <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width = 120 height = 90 />
-          <span>Title</span>
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <ul class="row-fluid" id="search_results">
+                    <li>
+                        <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                        <span>Title</span>
 
-        </li>
-      </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
 {% endblock %}

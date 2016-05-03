@@ -20,6 +20,12 @@ from werkzeug import secure_filename, generate_password_hash, check_password_has
 from flask.ext.login import LoginManager, UserMixin, AnonymousUserMixin, login_required, login_user, logout_user, \
     current_user
 
+#TODO: Make seperate distinct pages for create station join station
+#TODO: JS to send server when video starts and ends so now playing and video history can update on update
+#TODO: URL/Query switching button on input bar
+#TODO: mobile format, large sticky search bar at bottom, possibly desktop too
+#TODO:Clean up code thoroughly
+
 IMG_FOLDER = '/Users/Jon/Google_Drive/Github/cs205/MegsArtist/MegsArtist/img/'
 TRACK_FOLDER = '/Users/Jon/Google_Drive/Github/cs205/MegsArtist/MegsArtist/track/'
 # IMG_FOLDER = '/home/ubuntu/flaskapp/img/'
@@ -331,33 +337,35 @@ def addPlayable():
         else:
             playable_url = split_playable_url[split_playable_url.index("/") + 1]
     # getting name and thumbnail from youtube
-    playable = Playable.query.filter(
-        current_user.session_id == Playable.session_id,
-        Playable.url == playable_url
-    ).first()
-    # checks for duplicate, TODO add error if duplicate
-    if playable is None:
-        params = {'part': 'id,snippet', 'id': playable_url, 'key': YOUTUBE_API_KEY}
-        r = (requests.get('https://www.googleapis.com/youtube/v3/videos', params=params)).json()
-        print("R: ")
-        print(r)
-        playable_name = r['items'][0]['snippet']['title']
-        thumb_url = r['items'][0]['snippet']['thumbnails']['default']['url']
+    if(len(playable_url) == 11):
+        playable = Playable.query.filter(
+            current_user.session_id == Playable.session_id,
+            Playable.url == playable_url
+        ).first()
+        # checks for duplicate, TODO add error if duplicate
+        if playable is None:
+            params = {'part': 'id,snippet', 'id': playable_url, 'key': YOUTUBE_API_KEY}
+            r = (requests.get('https://www.googleapis.com/youtube/v3/videos', params=params)).json()
+            print("R: ")
+            print(r)
+            playable_name = r['items'][0]['snippet']['title']
+            thumb_url = r['items'][0]['snippet']['thumbnails']['default']['url']
 
-        playable = Playable(url=playable_url,
-                            session_id=session.id,
-                            added_by_id=current_user.id,
-                            score=0,
-                            name=playable_name,
-                            thumb_url=thumb_url
-                            )
-        playable.time_modified = datetime.utcnow()
-        print(playable.time_modified)
-        db.session.add(playable)
-        db.session.commit()
-        newPlayableID = Playable.query.filter_by(url=playable_url).first().id
-        # send back success message to js with new tag ID
-        return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
+            playable = Playable(url=playable_url,
+                                session_id=session.id,
+                                added_by_id=current_user.id,
+                                score=0,
+                                name=playable_name,
+                                thumb_url=thumb_url
+                                )
+            playable.time_modified = datetime.utcnow()
+            print(playable.time_modified)
+            db.session.add(playable)
+            db.session.commit()
+            newPlayableID = Playable.query.filter_by(url=playable_url).first().id
+            # send back success message to js with new tag ID
+            return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
+    return json.dumps({'result': 'error'}), 400, {'ContentType': 'application/json'} #TODO give differenent response if already added
 
 
 @app.route('/session/update/', methods=['GET'])
