@@ -18,7 +18,7 @@
             var firstScriptTag = document.getElementsByTagName('script')[0];
             firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
         </script>
-            <form id="url_form">
+        <form id="url_form">
             <div class="add-link input-group">
                 <input type="text" class="form-control" placeholder="Search Query or Youtube URL">
       <span class="input-group-btn">
@@ -28,17 +28,30 @@
         </form>
 
 
-
     </div><!-- /.col-lg-8 -->
 
     <div class="col-lg-4 session_info">
         <ul id="now_playing" class="list-group">
             <b>Now Playing</b>
+            {% if playable_playing is defined and playable_playing is not none %}
+                <li class="clearfix list-group-item" data-url="{{ playable_playing.url }}">
+                        <span class="upvote {% if playable_playing.user_vote() > 0 %}clicked{% endif %}">
+                            &#x25B2;
+                        </span>
+                        <span class="downvote {% if playable_playing.user_vote() < 0 %}clicked{% endif %}">
+                            &#x25BC;
+                        </span>
+                    <img src='{{ playable_playing.thumb_url }}' class='img-rounded' width='60' height='45'>
+                    <span class="title">{{ playable_playing.name }}</span>
+                    <span class="score label label-default label-pill pull-xs-right">{{ playable_playing.score }}</span>
+
+
+                </li>
+            {% endif %}
         </ul>
         <ul id="playables" class="list-group">
             <b>Up Next</b>
-            {% for playable in playables %}
-                {% if playable.state == "unplayed" %}
+            {% for playable in playables_unplayed %}
                 <li class="clearfix list-group-item" data-url="{{ playable.url }}">
                         <span class="upvote {% if playable.user_vote() > 0 %}clicked{% endif %}">
                             &#x25B2;
@@ -52,8 +65,6 @@
 
 
                 </li>
-                {% endif %}
-
             {% endfor %}
         </ul>
 

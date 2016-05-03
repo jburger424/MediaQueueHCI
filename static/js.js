@@ -136,9 +136,9 @@ jQuery(function ($) { // First argument is the jQuery object
         function onPlayerStateChange(event) {
             if (event['data'] == 0) {
                 console.log("video_ended");
-                goToNext();
                 var vid_id = $("ul#now_playing li:first").attr("data-url");
                 updatePlayableState(vid_id,"played");
+                goToNext();
             }
         }
 
