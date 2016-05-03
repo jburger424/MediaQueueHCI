@@ -41,7 +41,7 @@ jQuery(function ($) { // First argument is the jQuery object
 
         function query(query) {
             //var query = $("#vid-search input").val();
-            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
+            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
             $("ul#search_results").empty();
             $.ajax({
                 type: "GET",
