@@ -276,7 +276,11 @@ def addPlayable():
             newPlayableID = Playable.query.filter_by(url=playable_url).first().id
             # send back success message to js with new tag ID
             return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
-    return json.dumps({'result': 'error'}), 400, {
+    else:
+        print("Not 11 chars: "+playable_url)
+        return json.dumps({'result': 'error'}), 400, {
+        'ContentType': 'application/json'}  # TODO give differenent response if already added
+    return json.dumps({'result': 'error'}), 401, {
         'ContentType': 'application/json'}  # TODO give differenent response if already added
 
 
