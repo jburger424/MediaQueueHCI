@@ -77,7 +77,6 @@ ul#playables {
 #now_playing img.img-rounded {
     width: 120px;
     height: 90px;
-    margin-left: 0px;
     float: left;
     margin-left: 5px;
 }
@@ -167,6 +166,9 @@ span.downvote.clicked {
     color: white;
 }
 
+ul.navbar>li>a{
+    color: white;
+}
 ul b {
     width: 100%;
     text-align: center;
@@ -182,7 +184,8 @@ ul b {
     border-width: 1px 0px 0px;
     padding: 5px 0px;
     background: #BCBAF3;
-    border-color: #3F3CCC;
+
+    border-color: #E5E5F3;
     /* cursor: -webkit-zoom-in; */
     /* cursor: zoom-in; */
 }
@@ -221,7 +224,6 @@ ul b {
 
 .btn-lg {
     background-color: #fefffd;
-    border-color: #676867;
     color: grey;
     border-color: black;
     border-width: 1px;

@@ -20,6 +20,12 @@ from werkzeug import secure_filename, generate_password_hash, check_password_has
 from flask.ext.login import LoginManager, UserMixin, AnonymousUserMixin, login_required, login_user, logout_user, \
     current_user
 
+#TODO: Make seperate distinct pages for create station join station
+#TODO: JS to send server when video starts and ends so now playing and video history can update on update
+#TODO: URL/Query switching button on input bar
+#TODO: mobile format, large sticky search bar at bottom, possibly desktop too
+#TODO:Clean up code thoroughly
+
 IMG_FOLDER = '/Users/Jon/Google_Drive/Github/cs205/MegsArtist/MegsArtist/img/'
 TRACK_FOLDER = '/Users/Jon/Google_Drive/Github/cs205/MegsArtist/MegsArtist/track/'
 # IMG_FOLDER = '/home/ubuntu/flaskapp/img/'
