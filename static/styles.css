@@ -1,4 +1,7 @@
 
+.navbar a.dropdown-toggle {
+    font-size: 22px;
+}
 #submit {
     width: 100%;
 }
@@ -87,9 +90,37 @@ ul#playables {
     z-index: 100;
 }
 
-ul#users, ul#history {
+ul#history {
     padding: 0px;
+    min-width: 250px;
+    max-height: 300px;
+    overflow: scroll;
+
 }
+ul#users{
+    padding:0px;
+}
+ul#history li{
+        font-size: 12px;
+}
+ul#history li span.upvote, ul#history li span.downvote, ul#history li .score{
+    display: none;
+}
+/*TODO: make centered on mobile*/
+ul#users li {
+    /* border: 2px black solid; */
+    border-top: 1px #ddd solid;
+    background: #EEEDFF;
+    padding-left: 4px;
+}
+ul#users li:first-of-type {
+    /* border: 2px black solid; */
+    border-top: 0px;
+    margin-top: 0px;
+    background: #EEEDFF;
+    padding-left: 0px;
+}
+
 
 #now_playing b {
     height: 35px;
