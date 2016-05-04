@@ -1,4 +1,6 @@
-
+.navbar-brand img{
+    height: 40px;
+}
 .navbar a.dropdown-toggle {
     font-size: 22px;
 }
