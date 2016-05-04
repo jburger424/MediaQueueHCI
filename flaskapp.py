@@ -202,7 +202,7 @@ def session(url_hex_key):
             login_user(user)
         return redirect("/session/" + url_hex_key)
 
-    return render_template('create_session.html', nicknameForm=joinForm)
+    return render_template('join_session.html', joinForm=joinForm)
 
 @app.route('/session/join/', methods=['GET', 'POST'])
 def join_session():
