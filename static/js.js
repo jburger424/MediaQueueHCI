@@ -107,6 +107,7 @@ jQuery(function ($) { // First argument is the jQuery object
             var player;
             var vWidth = $(".add-link.input-group").width();
             var vHeight = vWidth * (9 / 16);
+            $(".add-link").css("top",vHeight);
             window.onYouTubePlayerAPIReady = function () {
                 console.log("something working");
                 player = new YT.Player('player', {
