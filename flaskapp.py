@@ -164,7 +164,7 @@ def session(url_hex_key):
         print("session is none")
         message = "Error: The session '" + url_hex_key + "' does not exist. Please <a href='/'>create a session</a> or do **something else."
         flash(message, "error")  # TODO
-        return redirect("/create/session/")
+        return redirect("/session/create/")
 
     users = User.query.filter_by(session_id=session.id).all()
 
