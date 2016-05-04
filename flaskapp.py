@@ -147,7 +147,7 @@ class NicknameForm(Form):
 
 class JoinForm(Form):
     # artistName = StringField('Artist Name*', validators=[Required()])
-    name = StringField('You Nickname')
+    name = StringField('Your Nickname')
     hex_key = StringField('Current Session Key')
     submit = SubmitField('Submit')
 
