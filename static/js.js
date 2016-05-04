@@ -270,7 +270,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     for (var j in users) {
                         var name = users[j]['Name'];
                         if($("#users li:contains("+name+")").length == 0){
-                            $("#users").append("<li>" + + "</li>");
+                            $("#users").append("<li>" + name + "</li>");
                             console.log("Adding: " + users[j]['Name']);
                         }
                     }
