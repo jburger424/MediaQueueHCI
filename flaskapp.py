@@ -138,7 +138,7 @@ class Vote(db.Model):
 
 class NicknameForm(Form):
     # artistName = StringField('Artist Name*', validators=[Required()])
-    name = StringField('Nickname')
+    name = StringField('Your Nickname')
     submit = SubmitField('Submit')
 
     def reset(self):
@@ -147,8 +147,8 @@ class NicknameForm(Form):
 
 class JoinForm(Form):
     # artistName = StringField('Artist Name*', validators=[Required()])
-    name = StringField('Nickname')
-    hex_key = StringField('Hex Key')
+    name = StringField('You Nickname')
+    hex_key = StringField('Current Session Key')
     submit = SubmitField('Submit')
 
     def reset(self):
@@ -156,19 +156,20 @@ class JoinForm(Form):
 
 
 @app.route('/session/<url_hex_key>', methods=['GET', 'POST'])
-def join_session(url_hex_key):
+def session(url_hex_key):
     joinForm = NicknameForm()
     session = Session.query.filter_by(hex_key=url_hex_key).first()
+    #if the user enters wrong key
     if session is None:
         print("session is none")
         message = "Error: The session '" + url_hex_key + "' does not exist. Please <a href='/'>create a session</a> or do **something else."
         flash(message, "error")  # TODO
-        return render_template('create_session.html', nicknameForm=joinForm)
+        return redirect("/create/session/")
 
     users = User.query.filter_by(session_id=session.id).all()
 
     # could reduce this logic
-    if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
+    if current_user.session.hex_key == url_hex_key: #had: current_user.is_authenticated and
         playables_unplayed = Playable.query.filter(
             Playable.session_id == session.id,
             Playable.state == "unplayed"
@@ -177,7 +178,6 @@ def join_session(url_hex_key):
             Playable.session_id == session.id,
             Playable.state == "played"
         ).order_by(Playable.time_modified)
-        print("playables_played", playables_played)
         playable_playing = Playable.query.filter(
             Playable.session_id == session.id,
             Playable.state == "playing"
@@ -188,9 +188,29 @@ def join_session(url_hex_key):
                            playables_played=playables_played,
                            playable_playing=playable_playing
                            )
-    if joinForm.validate_on_submit():
+    elif joinForm.validate_on_submit():
         name = joinForm.name.data
         session = Session.query.filter_by(hex_key=url_hex_key).first()
+        now = datetime.utcnow()
+        if(current_user not in users):
+            user = User(name=name,
+                        session=session,
+                        time_updated=now,
+                        time_joined=now)
+            db.session.add(user)
+            db.session.commit()
+            login_user(user)
+        return redirect("/session/" + url_hex_key)
+
+    return render_template('join_session.html', joinForm=joinForm)
+
+@app.route('/session/join/', methods=['GET', 'POST'])
+def join_session():
+    joinForm = JoinForm()
+    if joinForm.validate_on_submit():
+        name = joinForm.name.data
+        key = joinForm.hex_key.data
+        session = Session.query.filter_by(hex_key=key).first()
         now = datetime.utcnow()
         user = User(name=name,
                     session=session,
@@ -199,10 +219,30 @@ def join_session(url_hex_key):
         db.session.add(user)
         db.session.commit()
         login_user(user)
-        return redirect("/session/" + url_hex_key)
+        return redirect("/session/" + key)
+    return render_template("join_session.html", joinForm = joinForm)
 
-    return render_template('create_session.html', nicknameForm=joinForm)
-
+@app.route('/session/create/', methods=['GET', 'POST'])
+def create_session():
+    nicknameForm = NicknameForm()
+    if nicknameForm.validate_on_submit():
+        while True:
+            session_hex = hex(randint(291, 4095))[2:]  # random 3 digit hex
+            hex_check = Session.query.filter_by(hex_key=session_hex).first()
+            if hex_check is None:
+                break
+        session = Session(hex_key=session_hex)
+        now = datetime.utcnow()
+        user = User(name=nicknameForm.name.data,
+                    session=session,
+                    time_updated=now,
+                    time_joined=now)
+        db.session.add(session)
+        db.session.add(user)
+        db.session.commit()
+        login_user(user)
+        return redirect("/session/" + session_hex)
+    return render_template("create_session.html", nicknameForm = nicknameForm)
 
 @app.route('/', methods=['GET', 'POST'])
 def new_session():
@@ -225,7 +265,7 @@ def new_session():
         db.session.commit()
         login_user(user)
         return redirect("/session/" + session_hex)
-    return render_template('create_session.html', nicknameForm=nicknameForm)
+    return render_template("start_screen.html")
 
 
 @app.route('/session/add', methods=['POST'])

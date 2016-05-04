@@ -5,11 +5,11 @@
 
 {% block page_content %}
   <div class="page-header">
-    <h1>Create a New Session</h1>
+    <h1>Join a Session</h1>
   </div>
  <div class="jumbotron">
 <form method="POST" enctype="multipart/form-data">
-    {{ wtf.quick_form(nicknameForm)}}
+    {{ wtf.quick_form(joinForm)}}
 </form>
     </div>
 {% endblock %}

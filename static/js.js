@@ -268,8 +268,11 @@ jQuery(function ($) { // First argument is the jQuery object
                         console.log("Adding: " + playables[i]['name'] + " with score" + playables[i]['score']);
                     }
                     for (var j in users) {
-                        $("#users").append("<li>" + users[j]['Name'] + "</li>");
-                        console.log("Adding: " + users[j]['Name']);
+                        var name = users[j]['Name'];
+                        if($("#users li:contains("+name+")").length == 0){
+                            $("#users").append("<li>" + + "</li>");
+                            console.log("Adding: " + users[j]['Name']);
+                        }
                     }
                     //if only 1 playable start
                     if (!startedPlaying && findBootstrapEnvironment() == "lg") {
