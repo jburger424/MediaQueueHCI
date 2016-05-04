@@ -343,3 +343,36 @@ body {
 .navbar-default .navbar-link:hover {
   color: #fdfdfd;
 }
+  /* Custom, iPhone Retina */
+    @media only screen and (max-width : 320px) {
+        form#url_form {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    width: 100%;
+    margin-left: -15px;
+}
+
+    }
+
+    /* Extra Small Devices, Phones */
+    @media only screen and (max-width : 480px) {
+form#url_form {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    width: 100%;
+    margin-left: -15px;
+}
+    }
+
+    /* Small Devices, Tablets */
+    @media only screen and (max-width : 768px) {
+form#url_form {
+    position: fixed;
+    z-index: 10;
+    bottom: 0;
+    width: 100%;
+    margin-left: -15px;
+}
+    }
