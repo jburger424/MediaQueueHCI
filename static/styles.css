@@ -1,6 +1,9 @@
 .navbar-brand img{
     height: 40px;
 }
+.start_logo{
+    margin: 35px auto;
+}
 .navbar a.dropdown-toggle {
     font-size: 22px;
 }
