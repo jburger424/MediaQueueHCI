@@ -47,15 +47,17 @@ body {
 }
 
 .search_modal .add {
+    cursor: pointer;
     text-align: center;
-    width: 50px;
-    height: 50px;
     background: green;
-    line-height: 38px;
+    line-height: 37px;
     font-size: 50px;
     color: white;
 }
 
+.search_results{
+    padding-left: 0px;
+}
 
 
 #playables b {
@@ -100,6 +102,7 @@ ul#history {
     min-width: 250px;
     max-height: 300px;
     overflow: scroll;
+    overflow: scroll-y;
 
 }
 ul#users{
@@ -229,6 +232,9 @@ ul b {
 .session_info ul#playables li:last-of-type {
     border-width: 1px 0px;
     border-radius: 0px;
+}
+.session_info{
+    min-height: 468px;
 }
 
 /*End*/
