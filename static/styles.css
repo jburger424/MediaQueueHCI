@@ -52,7 +52,7 @@ body {
 .search_modal .add {
     cursor: pointer;
     text-align: center;
-    background: green;
+    background: #01afd1;
     line-height: 37px;
     font-size: 50px;
     color: white;
@@ -202,7 +202,7 @@ span.downvote.clicked {
 }
 
 #url_form button.btn.btn-default {
-    background: #36B120;
+    background: #01afd1;
     color: white;
 }
 
@@ -275,6 +275,37 @@ ul b {
 
 .btn-lg:hover {
     background-color: rgb(221, 221, 215);
+}
+
+.btn-lg-blue {
+    background-color: #30C3E0;
+    color: #333;
+    border-color: black;
+    border-width: 1px;
+    padding: 1.2% 2%;
+    font-size: 24px;
+
+}
+
+.btn-lg-blue:hover {
+    background-color: #01afd1;
+    color: #080808;
+
+}
+
+.btn-lg-yellow {
+    background-color: #F7D559;
+    color: #333;
+    border-color: black;
+    border-width: 1px;
+    padding: 1.2% 2%;
+    font-size: 24px;
+}
+
+.btn-lg-yellow:hover {
+    background-color: #F3C10D;
+    color: #080808;
+
 }
 
 body {

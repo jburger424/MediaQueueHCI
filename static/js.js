@@ -83,6 +83,8 @@ jQuery(function ($) { // First argument is the jQuery object
             addVidUrl($(this).parent("li").attr("data-vid"));
             $('.search_modal.modal.fade').modal('hide');
         });
+
+    
         function findBootstrapEnvironment() {
             var envs = ['xs', 'sm', 'md', 'lg'];
 
