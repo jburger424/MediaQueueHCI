@@ -20,7 +20,7 @@ li.clearfix.list-group-item {
 }
 
 #now_playing li.clearfix.list-group-item {
-    background: #EEEDFF;
+    background: hsla(190,99%,94%,1);
 }
 
 body {
@@ -64,8 +64,8 @@ body {
     font-weight: 400;
     height: 28px;
     line-height: 22px;
-    background: #E0E0E6;
-    color: #48484A;
+    background: #01AFD1;
+    color: #EAEAEA;
     border-color: #9C9C9C;
     border-width: 1px 0px;
     border-style: solid;
@@ -73,7 +73,7 @@ body {
 
 
 ul#playables {
-    background: #E5E5F3;
+    background: #CCCCCC;
     height: 330px;
 }
 
@@ -134,13 +134,13 @@ ul#users li:first-of-type {
 #now_playing b {
     height: 35px;
     line-height: 25px;
-    background: #6867B2;
-    color: white;
+    background: hsla(190,99%,27%,1);
+    color: #EAEAEA;
 }
 
 #now_playing li.list-group-item {
     border-width: 3px 0px 0px;
-    border-color: #F3C10D;
+    border-color: #01AFD1;
     text-align: center;
     font-weight: bold;
     border-radius: 0px;
@@ -294,7 +294,7 @@ body {
     font-weight: 100;
 }
 .navbar-default {
-    background-color: #49479A !Important;
+    background-color: #01AFD1 !Important;
     border-width: 0px 0px 6px 0px;
     border-radius: 0px;
     border-color: #F3C10D;
