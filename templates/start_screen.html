@@ -4,12 +4,21 @@
 {% block title %}Media Queue{% endblock %}
 
 {% block page_content %}
-    <h1 class="text-center">Logo**</h1>
+    <style>
+    .navbar-default{
+        display: none !Important;
+    }
+</style>
+    <div class="text-center">
+        <img src='/static/img/theqlogo.png' class='start_logo img-responsive' height='500px'>
+    </div>
     <div class="row">
+
         <div class="text-center">
-            <a href="/session/create/" class="btn btn-lg">Create  A Session</a>
-            <a href="/session/join" class="btn btn-lg">Join  A Session</a>
+            <a href="/session/create/" class="btn btn-lg-blue">Create a Session</a>
+            <a href="/session/join" class="btn btn-lg-yellow">Join a Session</a>
         </div>
     </div>
+
 
 {% endblock %}

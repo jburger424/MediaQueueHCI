@@ -58,11 +58,11 @@ jQuery(function ($) { // First argument is the jQuery object
                         var name = items[i]['snippet']['title'];
                         var img_url = items[i]['snippet']['thumbnails']['default']['url'];
                         console.log("name: " + name + " id: " + vid_id + " img: " + img_url);
-                        $("ul#search_results").append("<li class='row' data-vid='" + vid_id + "'><div class='col-md-4'><img src='" +
+                        $("ul#search_results").append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
                             img_url +
                             "' class='img-responsive' /></div>" +
-                            "<div class='col-md-6'>" + name + "</div>" +
-                            "<div class='col-md-2 add'>+</div> <span> </li>");
+                            "<div class='col-lg-6'>" + name + "</div>" +
+                            "<div class='col-lg-2 add'>+</div> <span> </li>");
                     }
                     $('.search_modal.modal.fade').modal('show');
                 }
@@ -83,6 +83,8 @@ jQuery(function ($) { // First argument is the jQuery object
             addVidUrl($(this).parent("li").attr("data-vid"));
             $('.search_modal.modal.fade').modal('hide');
         });
+
+    
         function findBootstrapEnvironment() {
             var envs = ['xs', 'sm', 'md', 'lg'];
 
@@ -271,7 +273,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     for (var j in users) {
                         var name = users[j]['Name'];
                         if($("#users li:contains("+name+")").length == 0){
-                            $("#users").append("<li>" + + "</li>");
+                            $("#users").append("<li>" + name + "</li>");
                             console.log("Adding: " + users[j]['Name']);
                         }
                     }

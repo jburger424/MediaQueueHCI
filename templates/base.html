@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <style>
         body {
-            background: url('{{ url_for('static', filename='img/background_texture.png') }}');
+            background: url('{{ url_for('static', filename='img/background_texture_3.png') }}');
         }
     </style>
 {% endblock %}
@@ -89,13 +89,6 @@
                             {% endfor %}
                         </ul>
                     </li>
-                {% else %}
-                    <ul class="nav navbar-nav navbar-left">
-                        <li data-toggle="tooltip" data-placement="bottom" title="Login as Artist, or Browse as Fan"
-                            class="row">
-                            <a class="navbar-link" href="/login/">Log In</a>
-                        </li>
-                    </ul>
                 {% endif %}
 
             </ul>
