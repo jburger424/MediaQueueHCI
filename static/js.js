@@ -58,12 +58,15 @@ jQuery(function ($) { // First argument is the jQuery object
                         var vid_id = items[i]['id']['videoId'];
                         var name = items[i]['snippet']['title'];
                         var img_url = items[i]['snippet']['thumbnails']['default']['url'];
-                        console.log("name: " + name + " id: " + vid_id + " img: " + img_url);
-                        $("ul#search_results").append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
-                            img_url +
-                            "' class='img-responsive' /></div>" +
-                            "<div class='col-lg-6'>" + name + "</div>" +
-                            "<div class='col-lg-2 add'>+</div> <span> </li>");
+                        //checks if it's already been played before
+                        var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
+                        //only include it if it doens't exist
+                        if(listItem.length == 0)
+                            $("ul#search_results").append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
+                                img_url +
+                                "' class='img-responsive' /></div>" +
+                                "<div class='col-lg-6'>" + name + "</div>" +
+                                "<div class='col-lg-2 add'>+</div> <span> </li>");
                     }
                     $('.search_modal.modal.fade').modal('show');
                 }
