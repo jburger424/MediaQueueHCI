@@ -39,6 +39,15 @@ jQuery(function ($) { // First argument is the jQuery object
             });
             update();
         }
+        function setVideo(url){
+            if(findBootstrapEnvironment() == "lg"){
+                player.cueVideoById({
+                    'videoId': url,
+                    'suggestedQuality': 'large'
+                });
+                player.playVideo();
+            }
+        }
 
         function query(query) {
             //var query = $("#vid-search input").val();
@@ -252,11 +261,7 @@ jQuery(function ($) { // First argument is the jQuery object
                             if (state == "playing") {
                                 appendTo = $("#now_playing");
                                 if (!startedPlaying) {
-                                    player.cueVideoById({
-                                        'videoId': url,
-                                        'suggestedQuality': 'large'
-                                    });
-                                    player.playVideo();
+                                     setVideo(url);
                                 }
                             }
                             else if (state == "played")
@@ -277,16 +282,12 @@ jQuery(function ($) { // First argument is the jQuery object
                             if (state == "playing" && listItem.parent().is("#playables")) { //shoud be playing but in playables
                                 if (currentPlaying != url) { //if player is playing something else
                                     //load new video
-                                    player.cueVideoById({
-                                        'videoId': url,
-                                        'suggestedQuality': 'large'
-                                    });
+                                    setVideo(url);
                                     //move old li to history
                                     $("#history").append($("#now_playing li"));
                                     //move this to now_playing
                                     $("#now_playing").append(listItem);
                                     //play
-                                    player.playVideo();
                                     //update state of other
                                     updatePlayableState(currentPlaying, "played");
                                     currentPlaying = url;
@@ -339,8 +340,6 @@ jQuery(function ($) { // First argument is the jQuery object
                             'videoId': $("#now_playing li").attr("data-url"),
                             'suggestedQuality': 'large'
                         });
-                        player.playVideo();
-
                         player.playVideo();
                         console.log("here we are");
                         startedPlaying = true;
