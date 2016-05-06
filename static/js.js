@@ -42,7 +42,7 @@ jQuery(function ($) { // First argument is the jQuery object
 
         function query(query) {
             //var query = $("#vid-search input").val();
-            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
+            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&embeddable=true&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
             $("ul#search_results").empty();
             $.ajax({
                 type: "GET",
@@ -219,7 +219,15 @@ jQuery(function ($) { // First argument is the jQuery object
             if ($("#playables li").length > 1)
                 sort($(this).parent());
         });
+
         function update() {
+            if(playerReady){
+                currentPlaying = player.getVideoUrl();
+                if(currentPlaying != undefined)
+                    currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
+
+            }
+
             $.ajax({
                 type: "GET",
                 url: "/session/update/",
@@ -235,18 +243,24 @@ jQuery(function ($) { // First argument is the jQuery object
                         //sees if this url already exists in list
                         var listItem = $("li.list-group-item[data-url='" + url + "']");
                         if (!listItem.length) {
-                            console.log("don't exist");
+                            //doesn't exist yet
                             var appendTo = $("#playables");
                             if (state == "playing") {
                                 if (playerReady) {
                                     var playerURL = player.getVideoUrl();
                                     currentPlaying = playerURL.substring(playerURL.search("v=") + 2, playerURL.length);
+                                    console.log("Current Playing: " + currentPlaying);
+                                    console.log("URL: " + url);
                                     if (currentPlaying != url) {
-                                        console.log("vid needs to be changed")
-                                        player.loadVideoById({
+                                        console.log("vid needs to be changed");
+                                        player.cueVideoById({
                                             'videoId': url,
                                             'suggestedQuality': 'large'
                                         });
+                                        updatePlayableState(currentPlaying, "played");
+                                        updatePlayableState(url, "playing");
+                                        player.playVideo();
+                                        currentPlaying = url;
                                     }
                                 }
                                 appendTo = $("#now_playing");
@@ -265,14 +279,41 @@ jQuery(function ($) { // First argument is the jQuery object
                         }
                         //if it already exists, update the score, check that it's in the right place
                         else {
-                            console.log("updating score");
                             listItem.find(".score").text(score);
-                            console.log(listItem.find(".title").text());
-                            console.log(state);
-                            console.log();
-                            if (state == "playing" && listItem.parent().is("#playables")) {
-                                console.log("condition 1");
+                            if (state == "playing" && listItem.parent().is("#playables")) { //shoud be playing but in playables
+                                if(currentPlaying != url){ //play the video
+                                    //load new video
+                                    player.cueVideoById({
+                                        'videoId': url,
+                                        'suggestedQuality': 'large'
+                                    });
+                                    //move old li to history
+                                    $("#history").append($("#now_playing li"));
+                                    //move this to now_playing
+                                    $("#now_playing").append(listItem);
+                                    //play
+                                    player.playVideo();
+                                    //update state of other
+                                    updatePlayableState(currentPlaying, "played");
+
+                                }
+                                updatePlayableState(currentPlaying, "played");
+                                $("#history").append($("#now_playing li")); //if something's playing move it to history
                                 $("#now_playing").append(listItem);
+
+                                console.log("Current Playing: " + currentPlaying);
+                                console.log("URL: " + url);
+                                if (currentPlaying != url) {
+                                    console.log("vid needs to be changed");
+                                    player.cueVideoById({
+                                        'videoId': url,
+                                        'suggestedQuality': 'large'
+                                    });
+                                    updatePlayableState(currentPlaying, "played");
+                                    updatePlayableState(url, "playing");
+                                    player.playVideo();
+                                    currentPlaying = url;
+                                }
                             }
                             if (state == "played" && (listItem.parent().is("#playables") || listItem.parent().is("#now_playing"))) {
                                 $("#history").append(listItem);
