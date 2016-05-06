@@ -61,7 +61,7 @@ jQuery(function ($) { // First argument is the jQuery object
                         //checks if it's already been played before
                         var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
                         //only include it if it doens't exist
-                        if(listItem.length == 0)
+                        if (listItem.length == 0)
                             $("ul#search_results").append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
                                 img_url +
                                 "' class='img-responsive' /></div>" +
@@ -135,7 +135,7 @@ jQuery(function ($) { // First argument is the jQuery object
             function onPlayerReady(event) {
                 playerReady = true;
                 event.target.playVideo();
-                //event.target.playVideo();
+                console.log("player ready");
                 if ($("#playables li").length > 0) {
                     startedPlaying = true;
                 }
@@ -163,6 +163,7 @@ jQuery(function ($) { // First argument is the jQuery object
 
             //start queue code
             function goToNext() {
+                console.log("go to next");
                 //if no items on either list or player isn't ready keep trying
                 if (($("#playables li").length == 0 && $("#now_playing li").length == 0) || !playerReady) {
                     setTimeout(goToNext, 500);
@@ -224,9 +225,9 @@ jQuery(function ($) { // First argument is the jQuery object
         });
 
         function update() {
-            if(playerReady){
+            if (playerReady) {
                 currentPlaying = player.getVideoUrl();
-                if(currentPlaying != undefined)
+                if (currentPlaying != undefined)
                     currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
 
             }
@@ -249,24 +250,14 @@ jQuery(function ($) { // First argument is the jQuery object
                             //doesn't exist yet
                             var appendTo = $("#playables");
                             if (state == "playing") {
-                                if (playerReady) {
-                                    var playerURL = player.getVideoUrl();
-                                    currentPlaying = playerURL.substring(playerURL.search("v=") + 2, playerURL.length);
-                                    console.log("Current Playing: " + currentPlaying);
-                                    console.log("URL: " + url);
-                                    if (currentPlaying != url) {
-                                        console.log("vid needs to be changed");
-                                        player.cueVideoById({
-                                            'videoId': url,
-                                            'suggestedQuality': 'large'
-                                        });
-                                        updatePlayableState(currentPlaying, "played");
-                                        updatePlayableState(url, "playing");
-                                        player.playVideo();
-                                        currentPlaying = url;
-                                    }
-                                }
                                 appendTo = $("#now_playing");
+                                if (!startedPlaying) {
+                                    player.cueVideoById({
+                                        'videoId': url,
+                                        'suggestedQuality': 'large'
+                                    });
+                                    player.playVideo();
+                                }
                             }
                             else if (state == "played")
                                 appendTo = $("#history");
@@ -284,7 +275,7 @@ jQuery(function ($) { // First argument is the jQuery object
                         else {
                             listItem.find(".score").text(score);
                             if (state == "playing" && listItem.parent().is("#playables")) { //shoud be playing but in playables
-                                if(currentPlaying != url){ //if player is playing something else
+                                if (currentPlaying != url) { //if player is playing something else
                                     //load new video
                                     player.cueVideoById({
                                         'videoId': url,
@@ -300,11 +291,11 @@ jQuery(function ($) { // First argument is the jQuery object
                                     updatePlayableState(currentPlaying, "played");
                                     currentPlaying = url;
                                 }
-                                else if($("#now_playing li").first().attr("data-url") != url){ //if it is playing right vid
+                                else if ($("#now_playing li").first().attr("data-url") != url) { //if it is playing right vid
                                     $("#history").append($("#now_playing li")); //if something's playing move it to history
                                     $("#now_playing").append(listItem);
                                 }
-                                else if($("#now_playing li").length ==0){
+                                else if ($("#now_playing li").length == 0) {
                                     $("#now_playing").append(listItem);
                                 }
                                 currentPlaying = url;
@@ -332,9 +323,27 @@ jQuery(function ($) { // First argument is the jQuery object
                         }
                     }
                     //if only 1 playable start
-                    if (!startedPlaying && findBootstrapEnvironment() == "lg") {
+                    if (!startedPlaying &&
+                        findBootstrapEnvironment() == "lg" &&
+                        $("#now_playing li").length == 0
+                    ) {
+                        console.log("here we are");
                         startedPlaying = true;
                         goToNext();
+                    }
+                    else if (playerReady && !startedPlaying &&
+                        findBootstrapEnvironment() == "lg" &&
+                        $("#now_playing li").length == 1
+                    ) {
+                        player.loadVideoById({
+                            'videoId': $("#now_playing li").attr("data-url"),
+                            'suggestedQuality': 'large'
+                        });
+                        player.playVideo();
+
+                        player.playVideo();
+                        console.log("here we are");
+                        startedPlaying = true;
                     }
 
 
@@ -383,7 +392,7 @@ jQuery(function ($) { // First argument is the jQuery object
         });
 
         function sort(thisObj) {
-            if($("ul#playables li").length < 2)
+            if ($("ul#playables li").length < 2)
                 return;
             var clicked = thisObj;
             var clickedScore = parseInt($(clicked).find(".score").text(), 10);
