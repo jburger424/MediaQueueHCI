@@ -28,8 +28,7 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
-app.config['SQLALCHEMY_DATABASE_URI'] = \
-    'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
 WTF_CSRF_SECRET_KEY = 'a random string'
 
@@ -344,7 +343,7 @@ def getUpdate():
     dict = {'users': users, 'playables': playables}
     time = datetime.utcnow() - timedelta(seconds=1)
     current_user.time_updated = time
-    print(users)
+    #print(users)
 
     return Response(json.dumps(dict), mimetype='application/json')
 
@@ -417,5 +416,5 @@ if __name__ == '__main__':
         use_debugger=True,
         use_reloader=True,
         host='0.0.0.0'))
-
     manager.run()  # had no params before 4/25/16
+#    app.run(host='0.0.0.0', port=5000)
