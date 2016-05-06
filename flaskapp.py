@@ -28,8 +28,12 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'hard to guess string'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///data.sqlite'
+print('sqlite:///' + os.path.join(basedir, 'data.sqlite'))
+
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 WTF_CSRF_SECRET_KEY = 'a random string'
 
 manager = Manager(app)
@@ -39,6 +43,7 @@ db = SQLAlchemy(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
+
 
 
 @login_manager.user_loader
@@ -412,9 +417,4 @@ def update_state():
 
 # will run program on 0.0.0.0 computer's local ip address
 if __name__ == '__main__':
-    manager.add_command("runserver", Server(
-        use_debugger=True,
-        use_reloader=True,
-        host='0.0.0.0'))
-    manager.run()  # had no params before 4/25/16
-#    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=5000)
