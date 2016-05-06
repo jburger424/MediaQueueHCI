@@ -284,7 +284,7 @@ jQuery(function ($) { // First argument is the jQuery object
                         else {
                             listItem.find(".score").text(score);
                             if (state == "playing" && listItem.parent().is("#playables")) { //shoud be playing but in playables
-                                if(currentPlaying != url){ //play the video
+                                if(currentPlaying != url){ //if player is playing something else
                                     //load new video
                                     player.cueVideoById({
                                         'videoId': url,
@@ -298,29 +298,20 @@ jQuery(function ($) { // First argument is the jQuery object
                                     player.playVideo();
                                     //update state of other
                                     updatePlayableState(currentPlaying, "played");
-
-                                }
-                                updatePlayableState(currentPlaying, "played");
-                                $("#history").append($("#now_playing li")); //if something's playing move it to history
-                                $("#now_playing").append(listItem);
-
-                                console.log("Current Playing: " + currentPlaying);
-                                console.log("URL: " + url);
-                                if (currentPlaying != url) {
-                                    console.log("vid needs to be changed");
-                                    player.cueVideoById({
-                                        'videoId': url,
-                                        'suggestedQuality': 'large'
-                                    });
-                                    updatePlayableState(currentPlaying, "played");
-                                    updatePlayableState(url, "playing");
-                                    player.playVideo();
                                     currentPlaying = url;
                                 }
+                                else if($("#now_playing li").first().attr("data-url") != url){ //if it is playing right vid
+                                    $("#history").append($("#now_playing li")); //if something's playing move it to history
+                                    $("#now_playing").append(listItem);
+                                }
+                                else if($("#now_playing li").length ==0){
+                                    $("#now_playing").append(listItem);
+                                }
+                                currentPlaying = url;
                             }
                             if (state == "played" && (listItem.parent().is("#playables") || listItem.parent().is("#now_playing"))) {
                                 $("#history").append(listItem);
-                                console.log("condition 2");
+                                console.log("condition 2!!!");
                             }
                         }
                         $(listItem).children(".clicked").removeClass("clicked");
@@ -392,6 +383,8 @@ jQuery(function ($) { // First argument is the jQuery object
         });
 
         function sort(thisObj) {
+            if($("ul#playables li").length < 2)
+                return;
             var clicked = thisObj;
             var clickedScore = parseInt($(clicked).find(".score").text(), 10);
             console.log("Clicked Score:  " + clickedScore);
