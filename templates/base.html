@@ -9,9 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
     <style>
-        body {
-            background: url('{{ url_for('static', filename='img/background_texture_3.png') }}');
-        }
+
     </style>
 {% endblock %}
 
@@ -30,7 +28,9 @@
         {% if current_user.is_authenticated %}
             <!--<span class="navbar-brand">The Queue</span>-->
             <span class="navbar-brand">
-            <img src="/static/img/theqlogo.png">
+            <a href="/">
+                            <img src="/static/img/theqlogo.png">
+            </a>
             </span>
 
         {% endif %}
