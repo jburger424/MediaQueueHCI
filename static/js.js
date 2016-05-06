@@ -46,6 +46,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     'suggestedQuality': 'large'
                 });
                 player.playVideo();
+                updatePlayableState(url,"playing");
             }
         }
 
@@ -145,9 +146,9 @@ jQuery(function ($) { // First argument is the jQuery object
                 playerReady = true;
                 event.target.playVideo();
                 console.log("player ready");
-                if ($("#playables li").length > 0) {
+                /*if ($("#playables li").length > 0) {
                     startedPlaying = true;
-                }
+                }*/
                 //goToNext()
 
             }
@@ -240,7 +241,6 @@ jQuery(function ($) { // First argument is the jQuery object
                     currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
 
             }
-
             $.ajax({
                 type: "GET",
                 url: "/session/update/",
@@ -341,7 +341,7 @@ jQuery(function ($) { // First argument is the jQuery object
                             'suggestedQuality': 'large'
                         });
                         player.playVideo();
-                        console.log("here we are");
+                        console.log("here we are2");
                         startedPlaying = true;
                     }
 

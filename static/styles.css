@@ -1,11 +1,20 @@
 .navbar-brand > img {
     display: inline-block;
 }
-
-#now_playing .next {
-    width: 30px;
+.next{
+    display: none;
+}
+.next i{
     height: 100%;
-    background: green;
+    line-height: 100px;
+    font-size: 35px;
+    color: #5F5E58;
+}
+#now_playing .next {
+    display: block;
+    width: 40px;
+    height: 100%;
+    background: #F3C10D;
     position: absolute;
     right: 0;
     top: 0;
@@ -95,7 +104,9 @@ li.clearfix.list-group-item {
     border-width: 1px 0px;
     border-style: solid;
 }
-
+#playables span.score{
+    margin-left: 5px;
+}
 ul#playables {
     background: #CCCCCC;
     height: 330px;
@@ -181,7 +192,7 @@ ul#users li:first-of-type {
     font-weight: bold;
     border-radius: 0px;
     background: #A8A6F6;
-    padding-right: 30px;
+    padding-right: 40px;
 }
 
 span.upvote, span.downvote {
@@ -440,6 +451,9 @@ body {
         width: 90%;
         padding-right: 10%;
     }
+    .next{
+    display: none;
+}
 
 }
 
@@ -456,6 +470,9 @@ body {
         width: 90%;
         padding-right: 10%;
     }
+        .next{
+    display: none;
+}
 }
 
 /* Small Devices, Tablets */
@@ -473,6 +490,9 @@ body {
         width: 90%;
         padding-right: 10%;
     }
+    .next{
+    display: none;
+}
 }
 
 .dropdown ul b {
