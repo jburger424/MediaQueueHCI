@@ -170,7 +170,7 @@ def session(url_hex_key):
     users = User.query.filter_by(session_id=session.id).all()
 
     # could reduce this logic
-    if current_user.session.hex_key == url_hex_key: #had: current_user.is_authenticated and
+    if current_user.is_authenticated and current_user.session.hex_key == url_hex_key: #had: current_user.is_authenticated and
         playables_unplayed = Playable.query.filter(
             Playable.session_id == session.id,
             Playable.state == "unplayed"
@@ -190,6 +190,7 @@ def session(url_hex_key):
                            playable_playing=playable_playing
                            )
     elif joinForm.validate_on_submit():
+        print("validated")
         name = joinForm.name.data
         session = Session.query.filter_by(hex_key=url_hex_key).first()
         now = datetime.utcnow()
@@ -414,4 +415,5 @@ def update_state():
 
 # will run program on 0.0.0.0 computer's local ip address
 if __name__ == '__main__':
+    app.debug = True
     app.run(host='0.0.0.0', port=5000)

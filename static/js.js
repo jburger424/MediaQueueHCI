@@ -3,6 +3,7 @@ jQuery(function ($) { // First argument is the jQuery object
         //var vHeight = vWidth * (9 / 16);
         var startedPlaying = false;
         var playerReady = false;
+        var currentPlaying;
 
         function updatePlayableState(playable_url, state) {
             $.ajax({
@@ -84,7 +85,7 @@ jQuery(function ($) { // First argument is the jQuery object
             $('.search_modal.modal.fade').modal('hide');
         });
 
-    
+
         function findBootstrapEnvironment() {
             var envs = ['xs', 'sm', 'md', 'lg'];
 
@@ -159,10 +160,12 @@ jQuery(function ($) { // First argument is the jQuery object
 
             //start queue code
             function goToNext() {
+                //if no items on either list or player isn't ready keep trying
                 if (($("#playables li").length == 0 && $("#now_playing li").length == 0) || !playerReady) {
                     setTimeout(goToNext, 500);
                 }
                 else {
+                    player.playVideo();
                     if (startedPlaying && $("#playables li").length > 0) {
                         $('#history').append($("ul#now_playing li:first"));
                         $('#now_playing').append($('#playables li:first'));
@@ -234,8 +237,20 @@ jQuery(function ($) { // First argument is the jQuery object
                         if (!listItem.length) {
                             console.log("don't exist");
                             var appendTo = $("#playables");
-                            if (state == "playing")
+                            if (state == "playing") {
+                                if (playerReady) {
+                                    var playerURL = player.getVideoUrl();
+                                    currentPlaying = playerURL.substring(playerURL.search("v=") + 2, playerURL.length);
+                                    if (currentPlaying != url) {
+                                        console.log("vid needs to be changed")
+                                        player.loadVideoById({
+                                            'videoId': url,
+                                            'suggestedQuality': 'large'
+                                        });
+                                    }
+                                }
                                 appendTo = $("#now_playing");
+                            }
                             else if (state == "played")
                                 appendTo = $("#history");
                             $(appendTo).append("<li class='clearfix list-group-item' data-url='" +
@@ -276,7 +291,7 @@ jQuery(function ($) { // First argument is the jQuery object
                     }
                     for (var j in users) {
                         var name = users[j]['Name'];
-                        if($("#users li:contains("+name+")").length == 0){
+                        if ($("#users li:contains(" + name + ")").length == 0) {
                             $("#users").append("<li>" + name + "</li>");
                             console.log("Adding: " + users[j]['Name']);
                         }

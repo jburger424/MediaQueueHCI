@@ -2,6 +2,14 @@
     display: inline-block;
 }
 
+#now_playing .next {
+    width: 30px;
+    height: 100%;
+    background: green;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
 body {
     background: url('/static/img/background_texture_3.png');
 }
@@ -168,6 +176,7 @@ ul#users li:first-of-type {
     font-weight: bold;
     border-radius: 0px;
     background: #A8A6F6;
+    padding-right: 30px;
 }
 
 span.upvote, span.downvote {
