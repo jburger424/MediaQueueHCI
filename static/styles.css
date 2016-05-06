@@ -1,15 +1,18 @@
 .navbar-brand > img {
     display: inline-block;
 }
-.next{
+
+.next {
     display: none;
 }
-.next i{
+
+.next i {
     height: 100%;
     line-height: 100px;
     font-size: 35px;
     color: #5F5E58;
 }
+
 #now_playing .next {
     display: block;
     width: 40px;
@@ -104,9 +107,11 @@ li.clearfix.list-group-item {
     border-width: 1px 0px;
     border-style: solid;
 }
-#playables span.score{
+
+#playables span.score {
     margin-left: 5px;
 }
+
 ul#playables {
     background: #CCCCCC;
     height: 330px;
@@ -162,11 +167,11 @@ ul#history li span.upvote, ul#history li span.downvote, ul#history li .score {
     display: none;
 }
 
-/*TODO: make centered on mobile*/
+
 ul#users li {
     /* border: 2px black solid; */
     border-top: 1px #ddd solid;
-    background: #EEEDFF;
+    background: #E1FAFF;
     padding-left: 4px;
 }
 
@@ -223,15 +228,17 @@ li.active:after {
 }
 
 span.downvote {
-    color: #FF8F8F;
+    cursor: pointer;
+    color: #ffbac1;
 }
 
 span.upvote {
-    color: #87C583;
+    cursor: pointer;
+    color: #bde9bf;
 }
 
 span.upvote:hover {
-    color: #59c554;
+    color: #00c51a;
 }
 
 span.upvote.clicked {
@@ -239,11 +246,11 @@ span.upvote.clicked {
 }
 
 span.downvote:hover {
-    color: #ff98a3;
+    color: #ff5735;
 }
 
 span.downvote.clicked {
-    color: red;
+    color: #c60829;
 }
 
 #url_form button.btn.btn-default {
@@ -447,13 +454,18 @@ body {
         width: 100%;
         margin-left: -15px;
     }
+
     .search_modal .add {
         width: 90%;
         padding-right: 10%;
     }
-    .next{
-    display: none;
-}
+
+    #now_playing .next {
+        display: none;
+    }
+    ul#now_playing {
+        min-height: 35px;
+    }
 
 }
 
@@ -466,13 +478,18 @@ body {
         width: 100%;
         margin-left: -15px;
     }
-        .search_modal .add {
+
+    .search_modal .add {
         width: 90%;
         padding-right: 10%;
     }
-        .next{
-    display: none;
-}
+
+    #now_playing .next {
+        display: none;
+    }
+    ul#now_playing {
+        min-height: 35px;
+    }
 }
 
 /* Small Devices, Tablets */
@@ -490,9 +507,13 @@ body {
         width: 90%;
         padding-right: 10%;
     }
-    .next{
-    display: none;
-}
+
+    #now_playing .next {
+        display: none;
+    }
+    ul#now_playing {
+        min-height: 35px;
+    }
 }
 
 .dropdown ul b {

@@ -175,7 +175,7 @@ jQuery(function ($) { // First argument is the jQuery object
             function goToNext() {
                 console.log("go to next");
                 //if no items on either list or player isn't ready keep trying
-                if (($("#playables li").length == 0 && $("#now_playing li").length == 0) || !playerReady) {
+                if ($("#playables li").length == 0 || !playerReady){ //was  && $("#now_playing li").length == 0) also
                     setTimeout(goToNext, 500);
                 }
                 else {
@@ -271,7 +271,7 @@ jQuery(function ($) { // First argument is the jQuery object
                                 "<span class='upvote'>&#x25B2;</span>" +
                                 "<span class='downvote'>&#x25BC;</span>" +
                                 "<img src='" + playables[i]['thumb_url'] + "' class='img-rounded' width='60' height='45'>" +
-                                "<span class='title'>" + playables[i]['name'] + "</span>" +
+                                "<div class='next'><i class='fa fa-step-forward' aria-hidden='true'></i></div><span class='title'>" + playables[i]['name'] + "</span>" +
                                 "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['score']).toString() + "</span>" +
                                 "</li>"
                             );
@@ -349,7 +349,13 @@ jQuery(function ($) { // First argument is the jQuery object
                 }
             });
         }
+        $("ul#now_playing").on('click', 'li div.next', function () {
+            console.log("click");
+            if($("#playables li").length > 0 ){
+                setVideo($("#playables li:first-of-type").attr("data-url"));
 
+            }
+        });
         //update every second
         var doUpdate = function () {
             update();
