@@ -39,49 +39,58 @@ jQuery(function ($) { // First argument is the jQuery object
             });
             update();
         }
-        function setVideo(url){
-            if(findBootstrapEnvironment() == "lg"){
+
+        function setVideo(url) {
+            if (findBootstrapEnvironment() == "lg") {
                 player.cueVideoById({
                     'videoId': url,
                     'suggestedQuality': 'large'
                 });
                 player.playVideo();
-                updatePlayableState(url,"playing");
+                updatePlayableState(url, "playing");
             }
         }
 
         function query(query) {
             //var query = $("#vid-search input").val();
             var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&embeddable=true&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
-            $("ul#search_results").empty();
-            $.ajax({
-                type: "GET",
-                url: url,
-                dataType: "json", // Set the data type so jQuery can parse it for you
-                success: function (data) {
-                    $("ul#search_results h2").remove();
-                    $("ul#search_results").prepend("<h2>Results for '" + query + "'</h2>");
+            var page_id = 0;
+            var next_page_token = "";
+            $("ul.search_results").empty();
+            while (page_id < 5) {
+                $.ajax({
+                    type: "GET",
+                    url: url+"&page_token="+next_page_token,
+                    dataType: "json", // Set the data type so jQuery can parse it for you
+                    success: function (data) {
+                        next_page_token = data['nextPageToken'];
+                        $("ul.search_results h2").remove();
+                        $("ul.search_results").prepend("<h2>Results for '" + query + "'</h2>");
 
-                    var items = data['items'];
-                    console.log(items);
-                    for (var i in items) {
-                        var vid_id = items[i]['id']['videoId'];
-                        var name = items[i]['snippet']['title'];
-                        var img_url = items[i]['snippet']['thumbnails']['default']['url'];
-                        //checks if it's already been played before
-                        var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
-                        //only include it if it doens't exist
-                        if (listItem.length == 0)
-                            $("ul#search_results").append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
-                                img_url +
-                                "' class='img-responsive' /></div>" +
-                                "<div class='col-lg-6'>" + name + "</div>" +
-                                "<div class='col-lg-2 add'>+</div> <span> </li>");
+                        var items = data['items'];
+                        console.log(items);
+                        for (var i in items) {
+                            var vid_id = items[i]['id']['videoId'];
+                            var name = items[i]['snippet']['title'];
+                            var img_url = items[i]['snippet']['thumbnails']['default']['url'];
+                            //checks if it's already been played before
+                            var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
+                            //only include it if it doens't exist
+                            if (listItem.length == 0)
+                                $("ul.search_results#" + page_id).append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
+                                    img_url +
+                                    "' class='img-responsive' /></div>" +
+                                    "<div class='col-lg-6'>" + name + "</div>" +
+                                    "<div class='col-lg-2 add'>+</div> <span> </li>");
+                        }
+                        if (page_id == 0)
+                            $('.search_modal.modal.fade').modal('show');
+
+
                     }
-                    $('.search_modal.modal.fade').modal('show');
-                }
-            });
+                });
 
+            }
         }
 
         $('#url_form').submit(function (event) {
@@ -92,7 +101,7 @@ jQuery(function ($) { // First argument is the jQuery object
         });
         $("#vid-search button").click();
         //add button next to items in search
-        $("ul#search_results").on('click', 'li div.add', function () {
+        $("ul.search_results").on('click', 'li div.add', function () {
             console.log($(this).parent("li").attr("data-vid"));
             addVidUrl($(this).parent("li").attr("data-vid"));
             $('.search_modal.modal.fade').modal('hide');
@@ -147,8 +156,8 @@ jQuery(function ($) { // First argument is the jQuery object
                 event.target.playVideo();
                 console.log("player ready");
                 /*if ($("#playables li").length > 0) {
-                    startedPlaying = true;
-                }*/
+                 startedPlaying = true;
+                 }*/
                 //goToNext()
 
             }
@@ -175,7 +184,7 @@ jQuery(function ($) { // First argument is the jQuery object
             function goToNext() {
                 console.log("go to next");
                 //if no items on either list or player isn't ready keep trying
-                if ($("#playables li").length == 0 || !playerReady){ //was  && $("#now_playing li").length == 0) also
+                if ($("#playables li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
                     setTimeout(goToNext, 500);
                 }
                 else {
@@ -261,7 +270,7 @@ jQuery(function ($) { // First argument is the jQuery object
                             if (state == "playing") {
                                 appendTo = $("#now_playing");
                                 if (!startedPlaying) {
-                                     setVideo(url);
+                                    setVideo(url);
                                 }
                             }
                             else if (state == "played")
@@ -349,9 +358,10 @@ jQuery(function ($) { // First argument is the jQuery object
                 }
             });
         }
+
         $("ul#now_playing").on('click', 'li div.next', function () {
             console.log("click");
-            if($("#playables li").length > 0 ){
+            if ($("#playables li").length > 0) {
                 setVideo($("#playables li:first-of-type").attr("data-url"));
 
             }

@@ -9,7 +9,7 @@
     <div class="col-lg-8">
 
         <div id="iframe-container">
-                    <div id="player"></div>
+            <div id="player"></div>
         </div>
 
         <script>
@@ -44,6 +44,7 @@
                             &#x25BC;
                         </span>
                     <img src='{{ playable_playing.thumb_url }}' class='img-rounded' width='60' height='45'>
+
                     <div class="next"><i class="fa fa-step-forward" aria-hidden="true"></i></div>
                     <span class="title">{{ playable_playing.name }}</span>
                     <span class="score label label-default label-pill pull-xs-right">{{ playable_playing.score }}</span>
@@ -63,6 +64,7 @@
                             &#x25BC;
                         </span>
                     <img src='{{ playable.thumb_url }}' class='img-rounded' width='60' height='45'>
+
                     <div class="next"></div>
                     <div class="next"><i class="fa fa-step-forward" aria-hidden="true"></i></div>
                     <span class="title">{{ playable.name }}</span>
@@ -77,13 +79,63 @@
     <div class="search_modal modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <ul class="row" id="search_results">
-                    <li>
-                        <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
-                        <span>Title</span>
+                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-wrap="false" data-interval="false">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                    </ol>
 
-                    </li>
-                </ul>
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                        <ul class="search_results item active" id="0">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results item" id="1">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results row item" id="2">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results row item" id="3">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results row item" id="4">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
