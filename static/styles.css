@@ -1,5 +1,10 @@
 .navbar-brand > img {
     display: inline-block;
+
+}
+.search_modal .search_results li {
+    padding-left: 10%;
+    padding-right: 10%;
 }
 
 .next {
@@ -80,9 +85,6 @@ li.clearfix.list-group-item {
     float: right;
 }
 
-.search_modal img {
-    max-width: 30%;
-}
 
 .search_modal .add {
     cursor: pointer;

@@ -80,11 +80,11 @@ jQuery(function ($) { // First argument is the jQuery object
                 var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
                 //only include it if it doens't exist
                 if (listItem.length == 0)
-                    toAppend += "<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
+                    toAppend += "<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3 col-sm-4'><img src='" +
                         img_url +
                         "' class='img-responsive' /></div>" +
-                        "<div class='col-lg-6'>" + name + "</div>" +
-                        "<div class='col-lg-2 add'>+</div> <span> </li>";
+                        "<div class='col-lg-6 col-sm-8'>" + name + "</div>" +
+                        "<div class='col-lg-2 col-sm-12 add'>+</div> <span> </li>";
             }
             $("ul.search_results#" + page_id).empty();
             $("ul.search_results#" + page_id).append(toAppend);
