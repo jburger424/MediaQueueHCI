@@ -4,6 +4,7 @@ jQuery(function ($) { // First argument is the jQuery object
         var startedPlaying = false;
         var playerReady = false;
         var currentPlaying;
+        $.ajaxSetup({cache: false});
 
         function updatePlayableState(playable_url, state) {
             $.ajax({
@@ -33,7 +34,7 @@ jQuery(function ($) { // First argument is the jQuery object
                 error: function (data) {
                     console.log("error");
                     console.log(data);
-                    query(url);
+                    runQuery(url);
                 },
                 dataType: "json"
             });
@@ -51,46 +52,60 @@ jQuery(function ($) { // First argument is the jQuery object
             }
         }
 
-        function query(query) {
-            //var query = $("#vid-search input").val();
-            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&max_results=10&embeddable=true&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
-            var page_id = 0;
-            var next_page_token = "";
-            $("ul.search_results").empty();
-            while (page_id < 5) {
-                $.ajax({
-                    type: "GET",
-                    url: url+"&page_token="+next_page_token,
-                    dataType: "json", // Set the data type so jQuery can parse it for you
-                    success: function (data) {
-                        next_page_token = data['nextPageToken'];
-                        $("ul.search_results h2").remove();
-                        $("ul.search_results").prepend("<h2>Results for '" + query + "'</h2>");
+        function getQueryData(query, page_token, page_id) {
+            var url = "https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=5&embeddable=true&type=video&q=" + query + "&key=AIzaSyDJwKzS-bxmwl4CgqNq9n-6059o9ljuvwM";
+            console.log(url);
+            $.ajax({
+                type: "GET",
+                url: url + "&pageToken=" + page_token,
+                dataType: "json", // Set the data type so jQuery can parse it for you
+                success: function (data) {
+                    appendQueryData(query, data, page_id);
+                }
+            });
+        }
 
-                        var items = data['items'];
-                        console.log(items);
-                        for (var i in items) {
-                            var vid_id = items[i]['id']['videoId'];
-                            var name = items[i]['snippet']['title'];
-                            var img_url = items[i]['snippet']['thumbnails']['default']['url'];
-                            //checks if it's already been played before
-                            var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
-                            //only include it if it doens't exist
-                            if (listItem.length == 0)
-                                $("ul.search_results#" + page_id).append("<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
-                                    img_url +
-                                    "' class='img-responsive' /></div>" +
-                                    "<div class='col-lg-6'>" + name + "</div>" +
-                                    "<div class='col-lg-2 add'>+</div> <span> </li>");
-                        }
-                        if (page_id == 0)
-                            $('.search_modal.modal.fade').modal('show');
+        function appendQueryData(query, data, page_id) {
+            next_page_token = data['nextPageToken'];
 
 
-                    }
-                });
-
+            var items = data['items'];
+            console.log(items);
+            var toAppend = "";
+            for (var i in items) {
+                var vid_id = items[i]['id']['videoId'];
+                var name = items[i]['snippet']['title'];
+                var img_url = items[i]['snippet']['thumbnails']['default']['url'];
+                //checks if it's already been played before
+                var listItem = $("li.list-group-item[data-url='" + vid_id + "']");
+                //only include it if it doens't exist
+                if (listItem.length == 0)
+                    toAppend += "<li class='row' data-vid='" + vid_id + "'><div class='col-lg-3'><img src='" +
+                        img_url +
+                        "' class='img-responsive' /></div>" +
+                        "<div class='col-lg-6'>" + name + "</div>" +
+                        "<div class='col-lg-2 add'>+</div> <span> </li>";
             }
+            $("ul.search_results#" + page_id).empty();
+            $("ul.search_results#" + page_id).append(toAppend);
+            if (page_id == 0)
+                $('.search_modal.modal.fade').modal('show');
+            if (page_id < 5){
+                getQueryData(query,next_page_token,page_id+1);
+            }
+            else{
+                return;
+                console.log("DONE!");
+            }
+        }
+
+        function runQuery(query) {
+            $(".modal-title").text("Results for '" + query + "'");
+            //set to page 1
+            $(".search_results").removeClass("active");
+            $(".search_results").first().addClass("active");
+            var empty = "";
+            getQueryData(query,empty,0);
         }
 
         $('#url_form').submit(function (event) {
