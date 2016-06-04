@@ -529,3 +529,7 @@ body {
     padding: 4px;
 }
 
+.no-pad{
+    padding: 0px !Important;
+}
+
