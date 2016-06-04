@@ -135,7 +135,6 @@ ul#playables {
 .col-lg-8, .col-lg-4 {
     padding: 0px;
 }
-
 .navbar-header {
     position: relative;
     z-index: 100;
@@ -297,6 +296,8 @@ ul b {
 
 .session_info {
     min-height: 468px;
+    position: absolute;
+    right: 0;
 }
 
 /*End*/
@@ -531,5 +532,22 @@ body {
 
 .no-pad{
     padding: 0px !Important;
+}
+
+.close-right {
+    position: absolute;
+    left: -36px;
+    top: 0;
+    z-index: 10;
+    background: #FEC240;
+    font-family: monospace;
+    font-weight: bold;
+    line-height: 35px;
+    padding: 0 5px;
+    color: #01AFD1;
+    cursor: pointer;
+}
+body{
+    overflow-x: hidden;
 }
 
