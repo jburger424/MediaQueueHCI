@@ -1,14 +1,18 @@
-jQuery(function ($) { // First argument is the jQuery object
-        //var vWidth = $(".add-link.input-group").width();
-        //var vHeight = vWidth * (9 / 16);
+jQuery(function ($) {
+
         var startedPlaying = false;
         var playerReady = false;
         var iframe = $("iframe");
+        var navbar = $("nav.navbar");
+        var closeRight = $(".close-right");
+        var playablesList = $("ul#playables li");
+
 
         var origIframeWidth;
         var origIframeHeight;
         var currentPlaying;
-        $(".close-right").click(function () {
+
+        closeRight.click(function () {
             if ($(this).hasClass("to-close"))
                 growVideo();
             else
@@ -19,7 +23,7 @@ jQuery(function ($) { // First argument is the jQuery object
             var newWidth = $(".container-fluid").width();
             var newHeight = $(window).innerHeight() - $("#url_form").outerHeight(true);
             var colHeight = $(window).innerHeight();
-            var navHeight = -1 * ($("nav.navbar").outerHeight(true));
+            var navHeight = -1 * (navbar.outerHeight(true));
             $("iframe,#iframe-container")
                 .animate(
                     {
@@ -39,7 +43,7 @@ jQuery(function ($) { // First argument is the jQuery object
                 height: colHeight + "px"
             }, {duration: 800, queue: false});
 
-            $("nav.navbar").animate({
+            navbar.animate({
                 marginTop: navHeight + "px"
             }, {duration: 800, queue: false});
 
@@ -50,9 +54,9 @@ jQuery(function ($) { // First argument is the jQuery object
                 queue: false,
                 done: function () {
                     console.log("ho");
-                    $(".close-right").removeClass("to-close");
-                    $(".close-right").addClass("to-open");
-                    $(".close-right").text("<<<");
+                    closeRight.removeClass("to-close");
+                    closeRight.addClass("to-open");
+                    closeRight.text("<<<");
                 }
             });
 
@@ -80,7 +84,7 @@ jQuery(function ($) { // First argument is the jQuery object
                 width: newWidth + "px",
                 height: colHeight + "px"
             }, {duration: 800, queue: false});
-            $("nav.navbar").animate({
+            navbar.animate({
                 marginTop: "0px"
             }, {duration: 800, queue: false});
             $(".session_info").animate({
@@ -90,9 +94,9 @@ jQuery(function ($) { // First argument is the jQuery object
                 queue: false,
                 done: function () {
                     console.log("hi");
-                    $(".close-right").removeClass("to-open");
-                    $(".close-right").addClass("to-close");
-                    $(".close-right").text(">>>");
+                    closeRight.removeClass("to-open");
+                    closeRight.addClass("to-close");
+                    closeRight.text(">>>");
                 }
             });
 
@@ -519,7 +523,7 @@ jQuery(function ($) { // First argument is the jQuery object
         });
 
         function sort(thisObj) {
-            if ($("ul#playables li").length < 2)
+            if (playablesList.length < 2)
                 return;
             var clicked = thisObj;
             var clickedScore = parseInt($(clicked).find(".score").text(), 10);
@@ -532,14 +536,14 @@ jQuery(function ($) { // First argument is the jQuery object
 
             //this is doing for each from bottom to top except for selected
             var top;
-            var topScore = parseInt($("ul#playables li").first().find(".score").text(), 10);
-            var bottomScore = parseInt($("ul#playables li").last().find(".score").text(), 10);
+            var topScore = parseInt(playablesList.first().find(".score").text(), 10);
+            var bottomScore = parseInt(playablesList.last().find(".score").text(), 10);
             if (clickedScore > topScore) {
-                top = $("ul#playables li").first();
+                top = playablesList.first();
             }
             else if (clickedScore < bottomScore) {
                 top = clicked;
-                clicked = $("ul#playables li").last();
+                clicked = playablesList.last();
             }
             else {
 
