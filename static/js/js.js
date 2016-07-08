@@ -8,8 +8,8 @@ jQuery(function ($) { // First argument is the jQuery object
         var origIframeWidth;
         var origIframeHeight;
         var currentPlaying;
-        $(".close-right").click(function(){
-            if($(this).hasClass("to-close"))
+        $(".close-right").click(function () {
+            if ($(this).hasClass("to-close"))
                 growVideo();
             else
                 shrinkVideo();
@@ -18,25 +18,35 @@ jQuery(function ($) { // First argument is the jQuery object
         var growVideo = function () {
             var newWidth = $(".container-fluid").width();
             var newHeight = $(window).innerHeight() - $("#url_form").outerHeight(true);
+            var colHeight = $(window).innerHeight();
             var navHeight = -1 * ($("nav.navbar").outerHeight(true));
-            $("iframe,#iframe-container,.col-lg-8")
+            $("iframe,#iframe-container")
                 .animate(
                     {
                         width: newWidth,
                         height: newHeight
                     },
                     {
-                        duration: 1000,
+                        duration: 800,
                         queue: false,
                         step: function (now) {
                             $(this).attr("width", now);
                             $(this).attr("height", now);
                         }
                     });
+            $(".col-lg-8").animate({
+                width: newWidth + "px",
+                height: colHeight + "px"
+            }, {duration: 800, queue: false});
+
+            $("nav.navbar").animate({
+                marginTop: navHeight + "px"
+            }, {duration: 800, queue: false});
+
             $(".session_info").animate({
                 right: "-" + $(".session_info").width() + "px"
             }, {
-                duration: 1000,
+                duration: 800,
                 queue: false,
                 done: function () {
                     console.log("ho");
@@ -46,32 +56,37 @@ jQuery(function ($) { // First argument is the jQuery object
                 }
             });
 
-            $("nav.navbar").animate({
-                marginTop: navHeight + "px"
-            }, {duration: 1000, queue: false});
-        }
+
+        };
 
         var shrinkVideo = function () {
             var newWidth = origIframeWidth;
             var newHeight = origIframeHeight;
-            $("iframe,#iframe-container,.col-lg-8")
-                .animate(
-                    {
-                        width: newWidth,
-                        height: newHeight
-                    },
-                    {
-                        duration: 1000,
-                        queue: false,
-                        step: function (now) {
-                            $(this).attr("width", now);
-                            $(this).attr("height", now);
-                        }
-                    });
+            var colHeight = newHeight + $("#url_form").outerHeight(true);
+            $("iframe,#iframe-container").animate(
+                {
+                    width: newWidth,
+                    height: newHeight
+                },
+                {
+                    duration: 800,
+                    queue: false,
+                    step: function (now) {
+                        $(this).attr("width", now);
+                        $(this).attr("height", now);
+                    }
+                });
+            $(".col-lg-8").animate({
+                width: newWidth + "px",
+                height: colHeight + "px"
+            }, {duration: 800, queue: false});
+            $("nav.navbar").animate({
+                marginTop: "0px"
+            }, {duration: 800, queue: false});
             $(".session_info").animate({
                 right: "0px"
             }, {
-                duration: 1000,
+                duration: 800,
                 queue: false,
                 done: function () {
                     console.log("hi");
@@ -80,11 +95,9 @@ jQuery(function ($) { // First argument is the jQuery object
                     $(".close-right").text(">>>");
                 }
             });
-            $("nav.navbar").animate({
-                marginTop: "0px"
-            }, {duration: 1000, queue: false});
 
-        }
+
+        };
 
         $.ajaxSetup({cache: false});
 
