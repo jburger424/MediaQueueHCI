@@ -1,8 +1,27 @@
 jQuery(function ($) {
+        function findBootstrapEnvironment() {
+            var envs = ['xs', 'sm', 'md', 'lg'];
+
+            var $el = $('<div>');
+            $el.appendTo($('body'));
+
+            for (var i = envs.length - 1; i >= 0; i--) {
+                var env = envs[i];
+
+                $el.addClass('hidden-' + env);
+                if ($el.is(':hidden')) {
+                    $el.remove();
+                    return env;
+                }
+            }
+        }
+
 
         var startedPlaying = false;
         var playerReady = false;
-        var iframe = $("iframe");
+        var videosInQueue = 0;
+        var iframe = $("#iframe-container iframe");
+        var iframeContainer = $("#iframe-container");
         var navbar = $("nav.navbar");
         var closeRight = $(".close-right");
         var playablesList = $("ul#playables li");
@@ -112,8 +131,6 @@ jQuery(function ($) {
                 url: "/session/state",
                 data: JSON.stringify({playable_url: playable_url, state: state}),
                 success: function (data) {
-                    //console.log("New Score: " + data.new_score);
-                    //console.log(data.article);
                 },
                 dataType: "json"
             });
@@ -129,7 +146,8 @@ jQuery(function ($) {
                     //console.log(data.title);
                     //console.log(data.article);
                 },
-                //figure out better way to do this
+                //this is a weak workaround
+                //TODO write function to check if this is a youtube url
                 error: function (data) {
                     console.log("error");
                     console.log(data);
@@ -141,12 +159,14 @@ jQuery(function ($) {
         }
 
         function setVideo(url) {
+
             if (findBootstrapEnvironment() == "lg") {
                 player.cueVideoById({
                     'videoId': url,
                     'suggestedQuality': 'large'
                 });
                 player.playVideo();
+
                 updatePlayableState(url, "playing");
             }
         }
@@ -166,8 +186,6 @@ jQuery(function ($) {
 
         function appendQueryData(query, data, page_id) {
             next_page_token = data['nextPageToken'];
-
-
             var items = data['items'];
             console.log(items);
             var toAppend = "";
@@ -221,44 +239,23 @@ jQuery(function ($) {
             $('.search_modal.modal.fade').modal('hide');
         });
 
-
-        function findBootstrapEnvironment() {
-            var envs = ['xs', 'sm', 'md', 'lg'];
-
-            var $el = $('<div>');
-            $el.appendTo($('body'));
-
-            for (var i = envs.length - 1; i >= 0; i--) {
-                var env = envs[i];
-
-                $el.addClass('hidden-' + env);
-                if ($el.is(':hidden')) {
-                    $el.remove();
-                    return env;
-                }
-            }
-        }
-
-
+        //only use the player on the desktop
         if (findBootstrapEnvironment() == "lg") {
-            console.log("if");
-
+            console.log("On Desktop");
             var player;
-            var vWidth = $(".add-link.input-group").width();
-            var vHeight = vWidth * (9 / 16);
+            var vWidth = $(".add-link.input-group").width(); //sets video width to search bar width
+            var vHeight = vWidth * (9 / 16); //sets height to match correct aspect ratio
             origIframeWidth = vWidth;
             origIframeHeight = vHeight;
-            //$(".add-link").css("top",vHeight);
             $("#iframe-container").css({
                 width: vWidth,
                 height: vHeight
             });
             window.onYouTubePlayerAPIReady = function () {
-                console.log("something working");
                 player = new YT.Player('player', {
                     height: vHeight,
                     width: vWidth,
-                    videoId: 'g4mHPeMGTJM',
+                    videoId: 'NULL',
                     events: {
                         'onReady': onPlayerReady,
                         'onStateChange': onPlayerStateChange
@@ -266,21 +263,13 @@ jQuery(function ($) {
                 });
             };
 
-// 4. The API will call this function when the video player is ready.
+
             function onPlayerReady(event) {
                 playerReady = true;
                 event.target.playVideo();
                 console.log("player ready");
-                /*if ($("#playables li").length > 0) {
-                 startedPlaying = true;
-                 }*/
-                //goToNext()
-
             }
 
-// 5. The API calls this function when the player's state changes.
-//    The function indicates that when playing a video (state=1),
-//    the player should play for six seconds and then stop.
             var done = false;
 
             function onPlayerStateChange(event) {
@@ -318,6 +307,8 @@ jQuery(function ($) {
                         'suggestedQuality': 'large'
                     });
                     updatePlayableState(vid_id, "playing");
+                    if (!iframeContainer.hasClass("visible"))
+                        iframeContainer.addClass("visible");
                 }
 
             }
@@ -329,7 +320,6 @@ jQuery(function ($) {
 
         $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
             console.log("VOTE!");
-            //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
             var url = $(this).parent("li").attr("data-url");
             var voteVal = $(this).hasClass("upvote") ? 1 : -1;
             if ($(this).hasClass("clicked")) {
@@ -448,7 +438,6 @@ jQuery(function ($) {
                             console.log("Adding: " + users[j]['Name']);
                         }
                     }
-                    //if only 1 playable start
                     if (!startedPlaying &&
                         findBootstrapEnvironment() == "lg" &&
                         $("#now_playing li").length == 0
@@ -508,14 +497,6 @@ jQuery(function ($) {
         /*Start Sliding Playables for voting*/
         var allItems = $("ul li");
         var numItems = allItems.length;
-        /*for(i=0; i<allItems.length; i++){
-         sort($(allItems[numItems-i+1]));
-         }*/
-
-        /*$("ul#playables").on("click", "li", function () {
-         console.log('clicked');
-         sort($(this));
-         });*/
 
         $("button#sub_new_score").click(function () {
             var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
