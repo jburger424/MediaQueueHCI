@@ -2,7 +2,6 @@
   display: inline-block;
   opacity: .5;
 }
-
 .search_modal .search_results li {
   padding-left: 10%;
   padding-right: 10%;
@@ -47,6 +46,7 @@ h1 {
 
 .start_logo {
   margin: 35px auto;
+  max-width: 80%;
 }
 
 .navbar a.dropdown-toggle {
@@ -87,7 +87,6 @@ li.clearfix.list-group-item {
     cursor: pointer;
     text-align: center;
     background: #01afd1;
-    padding-right: 5px;
     font-size: 50px;
     width: 60px;
     color: white;
@@ -487,7 +486,7 @@ body {
     z-index: 10;
     bottom: 0;
     width: 100%;
-    margin-left: -15px;
+    margin-left: 0;
   }
   .search_modal .add {
     width: 90%;
@@ -499,6 +498,10 @@ body {
   ul#now_playing {
     min-height: 35px;
   }
+  .search_modal .search_results li {
+  padding-left: 0%;
+  padding-right: 0%;
+}
 }
 
 /* Extra Small Devices, Phones */
@@ -508,7 +511,7 @@ body {
     z-index: 10;
     bottom: 0;
     width: 100%;
-    margin-left: -15px;
+    margin-left: 0;
   }
   .search_modal .add {
     width: 90%;
@@ -520,6 +523,10 @@ body {
   ul#now_playing {
     min-height: 35px;
   }
+    .search_modal .search_results li {
+  padding-left: 0%;
+  padding-right: 0%;
+}
 }
 
 /* Small Devices, Tablets */
@@ -529,7 +536,7 @@ body {
     z-index: 10;
     bottom: 0;
     width: 100%;
-    margin-left: -15px;
+    margin-left: 0;
   }
   .search_modal .add {
     width: 90%;
@@ -541,6 +548,10 @@ body {
   ul#now_playing {
     min-height: 35px;
   }
+    .search_modal .search_results li {
+  padding-left: 0%;
+  padding-right: 0%;
+}
 }
 
 .dropdown ul b {
@@ -572,4 +583,10 @@ body {
 
 body {
   overflow: hidden;
+}
+
+a.right.carousel-control,a.left.carousel-control {
+    background: #e0e0e0;
+    width: 10%;
+    opacity: 1;
 }

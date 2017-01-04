@@ -453,6 +453,15 @@ def update_state():
     playable.time_modified = datetime.utcnow()
     return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
+#custom error handlers
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
+
+@app.errorhandler(500)
+def server_error(e):
+    return render_template('500.html'), 500
+
 
 # will run program on 0.0.0.0 computer's local ip address
 if __name__ == '__main__':

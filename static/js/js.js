@@ -296,7 +296,6 @@ jQuery(function ($) {
 
             //start queue code
             function goToNext() {
-                alert("go to next");
                 //if no items on either list or player isn't ready keep trying
                 if ($("#unplayed li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
                     setTimeout(goToNext, 500);
@@ -365,9 +364,6 @@ jQuery(function ($) {
                     $("div#iframe-container").addClass("visible");
                     currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
                 }
-                else{
-                    $("div#iframe-container").removeClass("visible");
-                }
             }
             $.ajax({
                 type: "GET",
@@ -398,7 +394,13 @@ jQuery(function ($) {
                         }
                     //only if need be update now_playing and played
                     //new video must be loaded
-                    if(playing[0]['url'] != currentPlaying){
+
+                    if(playing.length == 0 && unplayed.length == 0){
+                        $("div#iframe-container").removeClass("visible");
+                        currentPlaying = null;
+                        player.stopVideo();
+                    }
+                    else if(playing[0]['url'] != currentPlaying){
                         console.log("video changed");
                         //load new video
                         currentPlaying = playing.length > 0 ? playing[0]['url'] : "null";
