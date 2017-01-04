@@ -33,6 +33,7 @@
     </div><!-- /.col-lg-8 -->
 
     <div class="col-lg-4 session_info">
+
     <div class="close-right to-close">&gt;&gt;&gt;</div>
         <ul id="now_playing" class="list-group">
             <b>Now Playing</b>
@@ -136,6 +137,19 @@
                         <span class="sr-only">Next</span>
                     </a>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="help_modal modal fade" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Modal Header</h2>
+                </div>
+                <h2>{{ request.url }}</h2>
+                    <img src="{{ qrcode( request.url ) }}">
             </div>
         </div>
     </div>

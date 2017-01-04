@@ -145,8 +145,11 @@ div#iframe-container {
     white-space: pre;
     display: block;
   }
-  &.visible iframe{
+  &.visible{
     opacity: 1;
+    iframe{
+      opacity: 1;
+    }
   }
   &.visible:before{
     display: none;

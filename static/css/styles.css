@@ -114,8 +114,10 @@ div#iframe-container {
     position: absolute;
     white-space: pre;
     display: block; }
-  div#iframe-container.visible iframe {
+  div#iframe-container.visible {
     opacity: 1; }
+    div#iframe-container.visible iframe {
+      opacity: 1; }
   div#iframe-container.visible:before {
     display: none; }
   div#iframe-container iframe {

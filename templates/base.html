@@ -118,6 +118,7 @@
 
     <!--<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
     <script type="text/javascript" src="{{ url_for('static', filename='js/js.js') }}"></script>
+     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.swap.js') }}"></script>
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>

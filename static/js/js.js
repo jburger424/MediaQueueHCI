@@ -1,27 +1,8 @@
 jQuery(function ($) {
-        function findBootstrapEnvironment() {
-            var envs = ['xs', 'sm', 'md', 'lg'];
-
-            var $el = $('<div>');
-            $el.appendTo($('body'));
-
-            for (var i = envs.length - 1; i >= 0; i--) {
-                var env = envs[i];
-
-                $el.addClass('hidden-' + env);
-                if ($el.is(':hidden')) {
-                    $el.remove();
-                    return env;
-                }
-            }
-        }
-
 
         var startedPlaying = false;
         var playerReady = false;
-        var videosInQueue = 0;
-        var iframe = $("#iframe-container iframe");
-        var iframeContainer = $("#iframe-container");
+        var iframe = $("iframe");
         var navbar = $("nav.navbar");
         var closeRight = $(".close-right");
         var playablesList = $("ul#playables li");
@@ -131,6 +112,8 @@ jQuery(function ($) {
                 url: "/session/state",
                 data: JSON.stringify({playable_url: playable_url, state: state}),
                 success: function (data) {
+                    //console.log("New Score: " + data.new_score);
+                    //console.log(data.article);
                 },
                 dataType: "json"
             });
@@ -146,8 +129,7 @@ jQuery(function ($) {
                     //console.log(data.title);
                     //console.log(data.article);
                 },
-                //this is a weak workaround
-                //TODO write function to check if this is a youtube url
+                //figure out better way to do this
                 error: function (data) {
                     console.log("error");
                     console.log(data);
@@ -159,14 +141,12 @@ jQuery(function ($) {
         }
 
         function setVideo(url) {
-
             if (findBootstrapEnvironment() == "lg") {
                 player.cueVideoById({
                     'videoId': url,
                     'suggestedQuality': 'large'
                 });
                 player.playVideo();
-
                 updatePlayableState(url, "playing");
             }
         }
@@ -186,6 +166,8 @@ jQuery(function ($) {
 
         function appendQueryData(query, data, page_id) {
             next_page_token = data['nextPageToken'];
+
+
             var items = data['items'];
             console.log(items);
             var toAppend = "";
@@ -239,17 +221,38 @@ jQuery(function ($) {
             $('.search_modal.modal.fade').modal('hide');
         });
 
-        //only use the player on the desktop
+
+        function findBootstrapEnvironment() {
+            var envs = ['xs', 'sm', 'md', 'lg'];
+
+            var $el = $('<div>');
+            $el.appendTo($('body'));
+
+            for (var i = envs.length - 1; i >= 0; i--) {
+                var env = envs[i];
+
+                $el.addClass('hidden-' + env);
+                if ($el.is(':hidden')) {
+                    $el.remove();
+                    return env;
+                }
+            }
+        }
+
+
         if (findBootstrapEnvironment() == "lg") {
-            console.log("On Desktop");
+            console.log("if");
+
             var player;
-            var vWidth = $(".add-link.input-group").width(); //sets video width to search bar width
-            var vHeight = vWidth * (9 / 16); //sets height to match correct aspect ratio
+            var vWidth = $(".add-link.input-group").width();
+            var vHeight = vWidth * (9 / 16);
             origIframeWidth = vWidth;
             origIframeHeight = vHeight;
+            //$(".add-link").css("top",vHeight);
             $("#iframe-container").css({
                 width: vWidth,
                 height: vHeight
+                //opacity:.5
             });
             window.onYouTubePlayerAPIReady = function () {
                 player = new YT.Player('player', {
@@ -263,13 +266,17 @@ jQuery(function ($) {
                 });
             };
 
-
+// 4. The API will call this function when the video player is ready.
             function onPlayerReady(event) {
                 playerReady = true;
                 event.target.playVideo();
                 console.log("player ready");
+
             }
 
+// 5. The API calls this function when the player's state changes.
+//    The function indicates that when playing a video (state=1),
+//    the player should play for six seconds and then stop.
             var done = false;
 
             function onPlayerStateChange(event) {
@@ -293,6 +300,7 @@ jQuery(function ($) {
                     setTimeout(goToNext, 500);
                 }
                 else {
+
                     player.playVideo();
                     if (startedPlaying && $("#playables li").length > 0) {
                         $('#history').append($("ul#now_playing li:first"));
@@ -307,8 +315,6 @@ jQuery(function ($) {
                         'suggestedQuality': 'large'
                     });
                     updatePlayableState(vid_id, "playing");
-                    if (!iframeContainer.hasClass("visible"))
-                        iframeContainer.addClass("visible");
                 }
 
             }
@@ -320,6 +326,7 @@ jQuery(function ($) {
 
         $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
             console.log("VOTE!");
+            //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
             var url = $(this).parent("li").attr("data-url");
             var voteVal = $(this).hasClass("upvote") ? 1 : -1;
             if ($(this).hasClass("clicked")) {
@@ -352,9 +359,10 @@ jQuery(function ($) {
         function update() {
             if (playerReady) {
                 currentPlaying = player.getVideoUrl();
-                if (currentPlaying != undefined)
+                if (currentPlaying != undefined && currentPlaying.length > 30){
+                    $("div#iframe-container").addClass("visible");
                     currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
-
+                }
             }
             $.ajax({
                 type: "GET",
@@ -362,13 +370,57 @@ jQuery(function ($) {
                 dataType: "json", // Set the data type so jQuery can parse it for you
                 success: function (data) {
                     var users = data['users'];
-                    var playables = data['playables'];
+                    var playing = data['playing'];
+                    var unplayed = data['unplayed'];
+                    var played = data['played'];
+
+                    //first update all unplayed
+                    $('#playables').empty();
+                    //TODO loading icon here
+                    //TODO case when no videos playing
+                    //TODO change id playables to unplayed
+                        for(var i in unplayed){
+                            playable = unplayed[i];
+                            html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
+                            $('#playables').append(html_text);
+                        }
+                    //only if need be update now_playing and played
+                    //new video must be loaded
+                    if(playing[0].url != currentPlaying){
+                        //load new video
+                        setVideo(playing);
+                        //move old li to history
+                        $("#history").empty();
+                        for(var i in played){
+                            playable = played[i];
+                            html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
+                            $('#history').append(html_text);
+                        }
+                        $("#now_playing").empty();
+                        //TODO for loop probably not neccesary
+                        for(var i in playing){
+                            playable = playing[i];
+                            html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
+                            $('#now_playing').append(html_text);
+                        }
+                        //play
+                        //update state of other
+                        //TODO is this neccesary?
+                        //updatePlayableState(currentPlaying, "played");
+                        currentPlaying = playing[i][url];
+                    }
+
+
+
+
+                    //
+                     /*
                     for (var i in playables) {
                         var url = playables[i]['url'];
                         var score = playables[i]['score'];
                         var state = playables[i]['state'];
 
-                        //sees if this url already exists in list
+                       //sees if this url already exists in list
                         var listItem = $("li.list-group-item[data-url='" + url + "']");
                         if (!listItem.length) {
                             //doesn't exist yet
@@ -420,17 +472,14 @@ jQuery(function ($) {
                                 $("#history").append(listItem);
                                 console.log("condition 2!!!");
                             }
-                        }
-                        $(listItem).children(".clicked").removeClass("clicked");
+                        }*/
+                        /*$(listItem).children(".clicked").removeClass("clicked");
                         if (playables[i]['user_vote'] > 0) {
                             $(listItem).find(".upvote").addClass("clicked")
                         }
                         else if (playables[i]['user_vote'] < 0) {
                             $(listItem).find(".downvote").addClass("clicked")
-                        }
-                        sort(listItem);
-                        console.log("Adding: " + playables[i]['name'] + " with score" + playables[i]['score']);
-                    }
+                        }*/
                     for (var j in users) {
                         var name = users[j]['Name'];
                         if ($("#users li:contains(" + name + ")").length == 0) {
@@ -438,6 +487,7 @@ jQuery(function ($) {
                             console.log("Adding: " + users[j]['Name']);
                         }
                     }
+                    //if only 1 playable start
                     if (!startedPlaying &&
                         findBootstrapEnvironment() == "lg" &&
                         $("#now_playing li").length == 0
@@ -497,13 +547,34 @@ jQuery(function ($) {
         /*Start Sliding Playables for voting*/
         var allItems = $("ul li");
         var numItems = allItems.length;
+        /*for(i=0; i<allItems.length; i++){
+         sort($(allItems[numItems-i+1]));
+         }*/
+
+        /*$("ul#playables").on("click", "li", function () {
+         console.log('clicked');
+         sort($(this));
+         });*/
 
         $("button#sub_new_score").click(function () {
             var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
             newItem.ready(sort($(this)));
         });
 
+        function genPlayableHTML(title, url, thumb_url, score){
+            text = "<li class='clearfix list-group-item' data-url='" +
+                                url + "'>" +
+                                "<span class='upvote'>&#x25B2;</span>" +
+                                "<span class='downvote'>&#x25BC;</span>" +
+                                "<img src='" + thumb_url + "' class='img-rounded' width='60' height='45'>" +
+                                "<div class='next'><i class='fa fa-step-forward' aria-hidden='true'></i></div><span class='title'>" + title + "</span>" +
+                                "<span class='score label label-default label-pill pull-xs-right'>" + score.toString() + "</span>" +
+                                "</li>";
+            return text;
+        }
+
         function sort(thisObj) {
+            console.log("sorting");
             if (playablesList.length < 2)
                 return;
             var clicked = thisObj;
@@ -584,6 +655,5 @@ jQuery(function ($) {
         }
 
         /*end*/
-    }
-);
+    };
 

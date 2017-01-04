@@ -9,20 +9,22 @@ from random import randint
 import uuid
 from flask import Flask, render_template, send_from_directory, flash, json, Response, request, redirect, url_for, \
     session
-from flask.ext.script import Manager, Server
-from flask.ext.bootstrap import Bootstrap
-from flask.ext.moment import Moment
-from flask.ext.wtf import Form
+from flask_script import Manager, Server
+from flask_bootstrap import Bootstrap
+from flask_moment import Moment
+from flask_wtf import Form
 from wtforms import StringField, SubmitField
-from flask.ext.sqlalchemy import SQLAlchemy
-from flask.ext.login import LoginManager, UserMixin, AnonymousUserMixin, login_required, login_user, logout_user, \
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager, UserMixin, AnonymousUserMixin, login_required, login_user, logout_user, \
     current_user
+from flask_qrcode import QRcode
 
 # TODO: Make seperate distinct pages for create station join station
 # TODO: URL/Query switching button on input bar
 # TODO: mobile format, large sticky search bar at bottom, possibly desktop too
 #TODO: history fix
 # TODO:Clean up code thoroughly
+#TODO: Blueprint
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -32,12 +34,13 @@ app.config['SQLALCHEMY_DATABASE_URI'] = \
     'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
-WTF_CSRF_SECRET_KEY = 'a random string'
+WTF_CSRF_SECRET_KEY = 'a random string' #todo
 
 manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
+qrcode = QRcode(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -77,11 +80,9 @@ login_manager.anonymous_user = AnonymousUser
 
 
 class Session(db.Model):
-    # __tablename__ = 'artist'
     id = db.Column(db.Integer, primary_key=True)
     hex_key = db.Column(db.String(3), unique=True)
     description = db.Column(db.String(264), unique=False)
-    # image = db.Column(db.String(264), unique=False)
     users = db.relationship('User', backref='session', lazy='dynamic')
 
     def isInitialized(self):
@@ -93,7 +94,6 @@ class Session(db.Model):
 
 # TODO add was_played boolean so pages can be built and updated with accurate history
 class Playable(db.Model):
-    # __tablename__ = 'playable'
     id = db.Column(db.Integer, primary_key=True)
     url = db.Column(db.String(64), unique=False)
     name = db.Column(db.String(256), unique=False)
@@ -125,7 +125,6 @@ class Playable(db.Model):
 
 
 class Vote(db.Model):
-    # __tablename__ = 'playable'
     id = db.Column(db.Integer, primary_key=True)
     session_id = db.Column(db.Integer, db.ForeignKey('session.id'))
     playable_id = db.Column(db.Integer, db.ForeignKey('session.id'))
@@ -138,7 +137,6 @@ class Vote(db.Model):
 
 
 class NicknameForm(Form):
-    # artistName = StringField('Artist Name*', validators=[Required()])
     name = StringField('Your Nickname')
     submit = SubmitField('Submit')
 
@@ -147,7 +145,6 @@ class NicknameForm(Form):
 
 
 class JoinForm(Form):
-    # artistName = StringField('Artist Name*', validators=[Required()])
     name = StringField('Your Nickname')
     hex_key = StringField('Current Session Key')
     submit = SubmitField('Submit')
@@ -169,12 +166,11 @@ def session(url_hex_key):
 
     users = User.query.filter_by(session_id=session.id).all()
 
-    # could reduce this logic
-    if current_user.is_authenticated and current_user.session.hex_key == url_hex_key: #had: current_user.is_authenticated and
+    if current_user.is_authenticated and current_user.session.hex_key == url_hex_key:
         playables_unplayed = Playable.query.filter(
             Playable.session_id == session.id,
             Playable.state == "unplayed"
-        ).order_by(Playable.score)
+        ).order_by(Playable.score.desc(),Playable.time_modified.desc())
         playables_played = Playable.query.filter(
             Playable.session_id == session.id,
             Playable.state == "played"
@@ -314,6 +310,7 @@ def addPlayable():
             # send back success message to js with new tag ID
             return json.dumps({'success': True, 'playable_id': newPlayableID}), 200, {'ContentType': 'application/json'}
     else:
+
         print("Not 11 chars: "+playable_url)
         return json.dumps({'result': 'error'}), 400, {
         'ContentType': 'application/json'}  # TODO give differenent response if already added
@@ -324,26 +321,41 @@ def addPlayable():
 @app.route('/session/update/', methods=['GET'])
 # should recieve time last updated (from here) and return playable added since then, can maybe get from current user
 def getUpdate():
-    playables = []
+    playable_playing = []
+    playables_unplayed = []
+    playables_played = []
     users = []
     try:
-        playables = Playable.query.filter(
-            current_user.session_id == Playable.session_id,
-            current_user.time_updated < Playable.time_modified
+        #TODO: can it be reduced?
+        playable_playing = Playable.query.filter(
+            Playable.session_id == current_user.session_id,
+            Playable.state == "playing"
         )
+        playables_unplayed = Playable.query.filter(
+            Playable.session_id == current_user.session_id,
+            Playable.state == "unplayed"
+        ).order_by(Playable.score.desc(),Playable.time_modified.desc())
+        playables_played = Playable.query.filter(
+            Playable.session_id == current_user.session_id,
+            Playable.state == "played"
+        ).order_by(Playable.time_modified)
+
     except:
         print("Unexpected Playable error:", sys.exc_info()[0])
 
     try:
         users = User.query.filter(
             current_user.session_id == User.session_id,
-            current_user.time_updated < User.time_joined
+            #current_user.time_updated < User.time_joined
+            #now returning everything
         )
     except:
         print("Unexpected User error:", sys.exc_info()[0])
     users = [user.get_dict() for user in users]
-    playables = [playable.get_dict() for playable in playables]
-    dict = {'users': users, 'playables': playables}
+    playable_playing = [playable.get_dict() for playable in playable_playing]
+    playables_unplayed = [playable.get_dict() for playable in playables_unplayed]
+    playables_played = [playable.get_dict() for playable in playables_played]
+    dict = {'users': users, 'playing': playable_playing, 'unplayed': playables_unplayed, 'played': playables_played}
     time = datetime.utcnow() - timedelta(seconds=1)
     current_user.time_updated = time
     print(users)
