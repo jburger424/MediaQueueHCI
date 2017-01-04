@@ -286,6 +286,7 @@ def addPlayable():
             Playable.url == playable_url
         ).first()
         # checks for duplicate, TODO add error if duplicate
+        #TODO if not None put back in queue
         if playable is None:
             params = {'part': 'id,snippet', 'id': playable_url, 'key': YOUTUBE_API_KEY}
             r = (requests.get('https://www.googleapis.com/youtube/v3/videos', params=params)).json()
@@ -302,6 +303,12 @@ def addPlayable():
                                 thumb_url=thumb_url,
                                 state="unplayed"
                                 )
+            #TODO double check logic in all cases
+            isPlaying = Playable.query.filter(
+            current_user.session_id == Playable.session_id,
+            Playable.state == 'playing') == 1
+            if not isPlaying:
+                playable.state == 'playing'
             playable.time_modified = datetime.utcnow()
             print(playable.time_modified)
             db.session.add(playable)
@@ -321,6 +328,7 @@ def addPlayable():
 @app.route('/session/update/', methods=['GET'])
 # should recieve time last updated (from here) and return playable added since then, can maybe get from current user
 def getUpdate():
+    print("Getting Update")
     playable_playing = []
     playables_unplayed = []
     playables_played = []
@@ -339,6 +347,25 @@ def getUpdate():
             Playable.session_id == current_user.session_id,
             Playable.state == "played"
         ).order_by(Playable.time_modified)
+        print("part 1",type(playable_playing))
+        #if nothing currently playing, move next item to playing
+        if playable_playing.count() == 0 and playables_unplayed.count() > 0:
+            print("part 2")
+            playables_unplayed.first().state = 'playing'
+            print(playables_unplayed.first().state)
+            print("part 3")
+            #this part incredibly redundant TODO fix
+            playable_playing = Playable.query.filter(
+                Playable.session_id == current_user.session_id,
+                Playable.state == "playing"
+            )
+            playables_unplayed = Playable.query.filter(
+                Playable.session_id == current_user.session_id,
+                Playable.state == "unplayed"
+            ).order_by(Playable.score.desc(),Playable.time_modified.desc())
+
+            #playable_playing.append(playables_unplayed.pop(0))
+           # playable_playing[0]['state'] = 'playing'
 
     except:
         print("Unexpected Playable error:", sys.exc_info()[0])
@@ -351,6 +378,7 @@ def getUpdate():
         )
     except:
         print("Unexpected User error:", sys.exc_info()[0])
+
     users = [user.get_dict() for user in users]
     playable_playing = [playable.get_dict() for playable in playable_playing]
     playables_unplayed = [playable.get_dict() for playable in playables_unplayed]
@@ -358,7 +386,7 @@ def getUpdate():
     dict = {'users': users, 'playing': playable_playing, 'unplayed': playables_unplayed, 'played': playables_played}
     time = datetime.utcnow() - timedelta(seconds=1)
     current_user.time_updated = time
-    print(users)
+    print(dict)
 
     return Response(json.dumps(dict), mimetype='application/json')
 
@@ -408,6 +436,7 @@ def update_state():
     jsonData = request.json
     playable_url = jsonData.get('playable_url')
     state = jsonData.get('state')
+    print("JSON Data: "+str(jsonData))
     # never more than one playing at a time
     if state == "playing":
         playables_playing = Playable.query.filter(

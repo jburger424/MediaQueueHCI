@@ -388,7 +388,7 @@ jQuery(function ($) {
                     //new video must be loaded
                     if(playing[0].url != currentPlaying){
                         //load new video
-                        setVideo(playing);
+                        setVideo(playing[0].url);
                         //move old li to history
                         $("#history").empty();
                         for(var i in played){
@@ -655,5 +655,5 @@ jQuery(function ($) {
         }
 
         /*end*/
-    };
+    });
 
