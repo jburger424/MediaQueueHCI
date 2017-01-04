@@ -296,15 +296,14 @@ jQuery(function ($) {
 
             //start queue code
             function goToNext() {
-                console.log("go to next");
+                alert("go to next");
                 //if no items on either list or player isn't ready keep trying
                 if ($("#unplayed li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
                     setTimeout(goToNext, 500);
                 }
                 else {
-
                     player.playVideo();
-                    if (startedPlaying && $("#unplayed li").length > 0) {
+                    /*if (startedPlaying && $("#unplayed li").length > 0) {
                         $('#history').append($("ul#now_playing li:first"));
                         $('#now_playing').append($('#unplayed li:first'));
                     }
@@ -316,7 +315,8 @@ jQuery(function ($) {
                         'videoId': vid_id,
                         'suggestedQuality': 'large'
                     });
-                    updatePlayableState(vid_id, "playing");
+                    updatePlayableState(vid_id, "playing");*/
+                    setVideo(vid_id);
                 }
 
             }
@@ -365,6 +365,9 @@ jQuery(function ($) {
                     $("div#iframe-container").addClass("visible");
                     currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
                 }
+                else{
+                    $("div#iframe-container").removeClass("visible");
+                }
             }
             $.ajax({
                 type: "GET",
@@ -395,13 +398,13 @@ jQuery(function ($) {
                         }
                     //only if need be update now_playing and played
                     //new video must be loaded
-                    console.log("curr play url:"+playing[0]['url']);
                     if(playing[0]['url'] != currentPlaying){
+                        console.log("video changed");
                         //load new video
-                        currentPlaying = playing[0]['url'];
+                        currentPlaying = playing.length > 0 ? playing[0]['url'] : "null";
                         setVideo(currentPlaying);
                         //move old li to history
-                        $("#history").empty();
+                        $("#history li").remove();
                         for(var i in played){
                             playable = played[i];
                             html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
@@ -418,8 +421,6 @@ jQuery(function ($) {
                         //update state of other
                         //TODO is this neccesary?
                         //updatePlayableState(currentPlaying, "played");
-
-
                     }
 
 
@@ -522,10 +523,11 @@ jQuery(function ($) {
 
         $("ul#now_playing").on('click', 'li div.next', function () {
             console.log("click");
-            if ($("#unplayed li").length > 0) {
+            /*if ($("#unplayed li").length > 0) {
                 setVideo($("#unplayed li:first-of-type").attr("data-url"));
 
-            }
+            }*/
+            updatePlayableState($("#now_playing li:first-of-type").attr("data-url"),'played')
         });
         //update every second
         var doUpdate = function () {
@@ -564,7 +566,7 @@ jQuery(function ($) {
 
         $("button#sub_new_score").click(function () {
             var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
-            newItem.ready(sort($(this)));
+            //newItem.ready(sort($(this)));
         });
 
         function genPlayableHTML(title, url, thumb_url, score){
@@ -577,87 +579,6 @@ jQuery(function ($) {
                                 "<span class='score label label-default label-pill pull-xs-right'>" + score.toString() + "</span>" +
                                 "</li>";
             return text;
-        }
-
-        function sort(thisObj) {
-            console.log("sorting");
-            if (playablesList.length < 2)
-                return;
-            var clicked = thisObj;
-            var clickedScore = parseInt($(clicked).find(".score").text(), 10);
-            console.log("Clicked Score:  " + clickedScore);
-            // all the LIs above the clicked one
-            var previousAll = clicked.prevAll();
-
-            // only proceed if it's not already on top (no previous siblings)
-            // top LI
-
-            //this is doing for each from bottom to top except for selected
-            var top;
-            var topScore = parseInt(playablesList.first().find(".score").text(), 10);
-            var bottomScore = parseInt(playablesList.last().find(".score").text(), 10);
-            if (clickedScore > topScore) {
-                top = playablesList.first();
-            }
-            else if (clickedScore < bottomScore) {
-                top = clicked;
-                clicked = playablesList.last();
-            }
-            else {
-
-                $("li").not(clicked.add(clicked.prev())).each(function () {
-                    var thisScore = parseInt($(this).find(".score").text(), 10);
-                    var nextScore = parseInt($(this).next().find(".score").text(), 10);
-                    //console.log(thisScore, nextScore);
-                    //was or equal to
-                    if (nextScore < clickedScore && thisScore >= clickedScore && $(this) != clicked) {
-                        // console.log("Move score " + clickedScore + " to before " + $(this).next().text());
-                        top = $(this).next().length ? $(this).next() : top;
-                    }
-                    else {
-                        //#console.log("Not Match: \n \tClicked Score: " + clickedScore + "\n\tThis Score: " + thisScore + "\n\tNext Score: " + nextScore + "\n\n")
-                    }
-                });
-
-
-            }
-
-            if (typeof top == 'undefined') {
-                console.log("No Swap Necessary");
-            }
-            else {
-                previousAll = top.index() < clicked.index() ? clicked.prevUntil(top.prev()) : previousAll = clicked.nextUntil(top);
-                var previous = $(previousAll[0]);
-
-                //if moving item up
-                var moveUp = top.index() < clicked.index() ? clicked.offset().top - top.offset().top : (top.offset().top - clicked.offset().top - clicked.outerHeight()) * -1;
-                var moveDown = (clicked.offset().top + clicked.outerHeight()) - (previous.offset().top + previous.outerHeight());
-
-
-                console.log("Move Up: " + moveUp);
-                console.log("Move Down: " + moveDown);
-                // let's move stuff
-                clicked.css('position', 'relative');
-                previousAll.css('position', 'relative');
-                clicked.animate({
-                    'top': -moveUp
-                });
-                previousAll.animate({
-                    'top': moveDown
-                }, {
-                    complete: function () {
-                        clicked.insertBefore(top);
-                        clicked.css({
-                            'position': 'static',
-                            'top': 0
-                        });
-                        previousAll.css({
-                            'position': 'static',
-                            'top': 0
-                        });
-                    }
-                });
-            }
         }
 
         /*end*/
