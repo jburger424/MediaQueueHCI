@@ -424,69 +424,6 @@ jQuery(function ($) {
                     }
 
 
-
-
-                    //
-                     /*
-                    for (var i in playables) {
-                        var url = playables[i]['url'];
-                        var score = playables[i]['score'];
-                        var state = playables[i]['state'];
-
-                       //sees if this url already exists in list
-                        var listItem = $("li.list-group-item[data-url='" + url + "']");
-                        if (!listItem.length) {
-                            //doesn't exist yet
-                            var appendTo = $("#unplayed");
-                            if (state == "playing") {
-                                appendTo = $("#now_playing");
-                                if (!startedPlaying) {
-                                    setVideo(url);
-                                }
-                            }
-                            else if (state == "played")
-                                appendTo = $("#history");
-                            $(appendTo).append("<li class='clearfix list-group-item' data-url='" +
-                                playables[i]['url'] + "'>" +
-                                "<span class='upvote'>&#x25B2;</span>" +
-                                "<span class='downvote'>&#x25BC;</span>" +
-                                "<img src='" + playables[i]['thumb_url'] + "' class='img-rounded' width='60' height='45'>" +
-                                "<div class='next'><i class='fa fa-step-forward' aria-hidden='true'></i></div><span class='title'>" + playables[i]['name'] + "</span>" +
-                                "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['score']).toString() + "</span>" +
-                                "</li>"
-                            );
-                        }
-                        //if it already exists, update the score, check that it's in the right place
-                        else {
-                            listItem.find(".score").text(score);
-                            if (state == "playing" && listItem.parent().is("#unplayed")) { //shoud be playing but in playables
-                                if (currentPlaying != url) { //if player is playing something else
-                                    //load new video
-                                    setVideo(url);
-                                    //move old li to history
-                                    $("#history").append($("#now_playing li"));
-                                    //move this to now_playing
-                                    $("#now_playing").append(listItem);
-                                    //play
-                                    //update state of other
-                                    updatePlayableState(currentPlaying, "played");
-                                    currentPlaying = url;
-                                }
-                                else if ($("#now_playing li").first().attr("data-url") != url) { //if it is playing right vid
-                                    $("#history").append($("#now_playing li")); //if something's playing move it to history
-                                    $("#now_playing").append(listItem);
-                                }
-                                else if ($("#now_playing li").length == 0) {
-                                    $("#now_playing").append(listItem);
-                                }
-                                currentPlaying = url;
-                            }
-                            if (state == "played" && (listItem.parent().is("#unplayed") || listItem.parent().is("#now_playing"))) {
-                                $("#history").append(listItem);
-                                console.log("condition 2!!!");
-                            }
-                        }*/
-
                     for (var j in users) {
                         var name = users[j]['Name'];
                         if ($("#users li:contains(" + name + ")").length == 0) {
