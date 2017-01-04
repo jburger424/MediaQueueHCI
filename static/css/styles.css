@@ -77,7 +77,7 @@ li.clearfix.list-group-item {
 .search_results {
   width: 100%; }
 
-#playables b {
+#unplayed b {
   font-weight: 400;
   height: 28px;
   line-height: 22px;
@@ -86,10 +86,10 @@ li.clearfix.list-group-item {
   border-color: #9C9C9C;
   border-width: 1px 0px;
   border-style: solid; }
-#playables span.score {
+#unplayed span.score {
   margin-left: 5px; }
 
-ul#playables {
+ul#unplayed {
   background: #CCCCCC;
   height: 330px; }
 
@@ -241,9 +241,9 @@ ul b {
     border-color: #E5E5F3;
     /* cursor: -webkit-zoom-in; */
     /* cursor: zoom-in; */ }
-  .session_info ul#playables li:first-of-type {
+  .session_info ul#unplayed li:first-of-type {
     border-width: 0px; }
-  .session_info ul#playables li:last-of-type {
+  .session_info ul#unplayed li:last-of-type {
     border-width: 1px 0px;
     border-radius: 0px; }
 

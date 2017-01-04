@@ -99,7 +99,7 @@ li.clearfix.list-group-item {
   width: 100%;
 }
 
-#playables {
+#unplayed {
   b {
     font-weight: 400;
     height: 28px;
@@ -115,7 +115,7 @@ li.clearfix.list-group-item {
   }
 }
 
-ul#playables {
+ul#unplayed {
   background: #CCCCCC;
   height: 330px;
 }
@@ -316,7 +316,7 @@ ul {
       /* cursor: -webkit-zoom-in; */
       /* cursor: zoom-in; */
     }
-    &#playables li {
+    &#unplayed li {
       &:first-of-type {
         border-width: 0px;
       }

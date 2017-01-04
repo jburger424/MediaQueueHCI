@@ -5,7 +5,7 @@ jQuery(function ($) {
         var iframe = $("iframe");
         var navbar = $("nav.navbar");
         var closeRight = $(".close-right");
-        var playablesList = $("ul#playables li");
+        var playablesList = $("ul#unplayed li");
 
 
         var origIframeWidth;
@@ -298,15 +298,15 @@ jQuery(function ($) {
             function goToNext() {
                 console.log("go to next");
                 //if no items on either list or player isn't ready keep trying
-                if ($("#playables li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
+                if ($("#unplayed li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
                     setTimeout(goToNext, 500);
                 }
                 else {
 
                     player.playVideo();
-                    if (startedPlaying && $("#playables li").length > 0) {
+                    if (startedPlaying && $("#unplayed li").length > 0) {
                         $('#history').append($("ul#now_playing li:first"));
-                        $('#now_playing').append($('#playables li:first'));
+                        $('#now_playing').append($('#unplayed li:first'));
                     }
 
                     var vid_id = $("ul#now_playing li:first").attr("data-url");
@@ -326,9 +326,9 @@ jQuery(function ($) {
             console.log("else");
         }
 
-        $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
+        $("ul#unplayed").on('click', 'li span.upvote,li span.downvote', function () {
             console.log("VOTE!");
-            //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
+            //$('#unplayed li.list-group-item .upvote, #unplayed li.list-group-item .downvote').click(function () {
             var url = $(this).parent("li").attr("data-url");
             var voteVal = $(this).hasClass("upvote") ? 1 : -1;
             if ($(this).hasClass("clicked")) {
@@ -354,7 +354,7 @@ jQuery(function ($) {
             console.log("this: ");
             console.log($(this));
             //update();
-            if ($("#playables li").length > 1)
+            if ($("#unplayed li").length > 1)
                 sort($(this).parent());
         });
 
@@ -377,15 +377,15 @@ jQuery(function ($) {
                     var played = data['played'];
 
                     //first update all unplayed
-                    $('#playables').empty();
+                    $('#unplayed li').remove();
                     //TODO loading icon here
                     //TODO case when no videos playing
                     //TODO change id playables to unplayed
                         for(var i in unplayed){
                             playable = unplayed[i];
                             html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
-                            $('#playables').append(html_text);
-                            listItem = $('#playables').last()
+                            $('#unplayed').append(html_text);
+                            listItem = $('#unplayed').last()
                             if (playable['user_vote'] > 0) {
                                 $(listItem).find(".upvote").addClass("clicked")
                             }
@@ -407,7 +407,7 @@ jQuery(function ($) {
                             html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
                             $('#history').append(html_text);
                         }
-                        $("#now_playing").empty();
+                        $("#now_playing li").remove();
                         //TODO for loop probably not neccesary
                         for(var i in playing){
                             playable = playing[i];
@@ -436,7 +436,7 @@ jQuery(function ($) {
                         var listItem = $("li.list-group-item[data-url='" + url + "']");
                         if (!listItem.length) {
                             //doesn't exist yet
-                            var appendTo = $("#playables");
+                            var appendTo = $("#unplayed");
                             if (state == "playing") {
                                 appendTo = $("#now_playing");
                                 if (!startedPlaying) {
@@ -458,7 +458,7 @@ jQuery(function ($) {
                         //if it already exists, update the score, check that it's in the right place
                         else {
                             listItem.find(".score").text(score);
-                            if (state == "playing" && listItem.parent().is("#playables")) { //shoud be playing but in playables
+                            if (state == "playing" && listItem.parent().is("#unplayed")) { //shoud be playing but in playables
                                 if (currentPlaying != url) { //if player is playing something else
                                     //load new video
                                     setVideo(url);
@@ -480,7 +480,7 @@ jQuery(function ($) {
                                 }
                                 currentPlaying = url;
                             }
-                            if (state == "played" && (listItem.parent().is("#playables") || listItem.parent().is("#now_playing"))) {
+                            if (state == "played" && (listItem.parent().is("#unplayed") || listItem.parent().is("#now_playing"))) {
                                 $("#history").append(listItem);
                                 console.log("condition 2!!!");
                             }
@@ -522,8 +522,8 @@ jQuery(function ($) {
 
         $("ul#now_playing").on('click', 'li div.next', function () {
             console.log("click");
-            if ($("#playables li").length > 0) {
-                setVideo($("#playables li:first-of-type").attr("data-url"));
+            if ($("#unplayed li").length > 0) {
+                setVideo($("#unplayed li:first-of-type").attr("data-url"));
 
             }
         });
@@ -557,7 +557,7 @@ jQuery(function ($) {
          sort($(allItems[numItems-i+1]));
          }*/
 
-        /*$("ul#playables").on("click", "li", function () {
+        /*$("ul#unplayed").on("click", "li", function () {
          console.log('clicked');
          sort($(this));
          });*/

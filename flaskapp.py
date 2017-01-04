@@ -428,6 +428,7 @@ def vote():
 
 
 @app.route('/session/state', methods=['POST'])
+#TODO review functionality
 def update_state():
     print("State Change")
     # states: unplayed, playing, played
@@ -439,9 +440,9 @@ def update_state():
     if state == "playing":
         playables_playing = Playable.query.filter(
             current_user.session_id == Playable.session_id,
-            state == "playing"
-        )#.all()
-        print("playables_playing: "+playables_playing)
+            Playable.state == "playing"
+        )
+        print("playables_playing: "+str(playables_playing))
         for playable in playables_playing:
             playable.state = "played"
     playable = Playable.query.filter(
