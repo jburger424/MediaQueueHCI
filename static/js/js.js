@@ -106,6 +106,7 @@ jQuery(function ($) {
         $.ajaxSetup({cache: false});
 
         function updatePlayableState(playable_url, state) {
+            console.log("update playable state: "+playable_url+" "+state);
             $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
@@ -141,6 +142,7 @@ jQuery(function ($) {
         }
 
         function setVideo(url) {
+            console.log("set video: "+url);
             if (findBootstrapEnvironment() == "lg") {
                 player.cueVideoById({
                     'videoId': url,
@@ -383,12 +385,21 @@ jQuery(function ($) {
                             playable = unplayed[i];
                             html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
                             $('#playables').append(html_text);
+                            listItem = $('#playables').last()
+                            if (playable['user_vote'] > 0) {
+                                $(listItem).find(".upvote").addClass("clicked")
+                            }
+                            else if (playable['user_vote'] < 0) {
+                                $(listItem).find(".downvote").addClass("clicked")
+                            }
                         }
                     //only if need be update now_playing and played
                     //new video must be loaded
-                    if(playing[0].url != currentPlaying){
+                    console.log("curr play url:"+playing[0]['url']);
+                    if(playing[0]['url'] != currentPlaying){
                         //load new video
-                        setVideo(playing[0].url);
+                        currentPlaying = playing[0]['url'];
+                        setVideo(currentPlaying);
                         //move old li to history
                         $("#history").empty();
                         for(var i in played){
@@ -407,7 +418,8 @@ jQuery(function ($) {
                         //update state of other
                         //TODO is this neccesary?
                         //updatePlayableState(currentPlaying, "played");
-                        currentPlaying = playing[i][url];
+
+
                     }
 
 
@@ -473,13 +485,7 @@ jQuery(function ($) {
                                 console.log("condition 2!!!");
                             }
                         }*/
-                        /*$(listItem).children(".clicked").removeClass("clicked");
-                        if (playables[i]['user_vote'] > 0) {
-                            $(listItem).find(".upvote").addClass("clicked")
-                        }
-                        else if (playables[i]['user_vote'] < 0) {
-                            $(listItem).find(".downvote").addClass("clicked")
-                        }*/
+
                     for (var j in users) {
                         var name = users[j]['Name'];
                         if ($("#users li:contains(" + name + ")").length == 0) {

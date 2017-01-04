@@ -342,15 +342,13 @@ def getUpdate():
         playables_unplayed = Playable.query.filter(
             Playable.session_id == current_user.session_id,
             Playable.state == "unplayed"
-        ).order_by(Playable.score.desc(),Playable.time_modified.desc())
+        ).order_by(Playable.score.desc(),Playable.time_modified) #time_mod was desc
         playables_played = Playable.query.filter(
             Playable.session_id == current_user.session_id,
             Playable.state == "played"
         ).order_by(Playable.time_modified)
-        print("part 1",type(playable_playing))
-        #if nothing currently playing, move next item to playing
         if playable_playing.count() == 0 and playables_unplayed.count() > 0:
-            print("part 2")
+            print("part 2",playables_unplayed.first())
             playables_unplayed.first().state = 'playing'
             print(playables_unplayed.first().state)
             print("part 3")
@@ -442,7 +440,8 @@ def update_state():
         playables_playing = Playable.query.filter(
             current_user.session_id == Playable.session_id,
             state == "playing"
-        ).all()
+        )#.all()
+        print("playables_playing: "+playables_playing)
         for playable in playables_playing:
             playable.state = "played"
     playable = Playable.query.filter(
