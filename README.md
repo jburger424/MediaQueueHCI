@@ -3,7 +3,7 @@
 Collaborative video queue where multiple users will add and vote on different Youtube videos to be
 played from a single computer. Built with Flask framework using AJAX and SQLite.
 
-### [Demo]()
+### [Demo](http://ec2-54-245-191-177.us-west-2.compute.amazonaws.com/)
 
 ## Getting Started
 ### Requirements (Included in virtual enviroment)
