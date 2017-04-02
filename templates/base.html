@@ -6,11 +6,9 @@
     {{ super() }}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
     <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.1/css/font-awesome.min.css">
-    <style>
-
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
 {% endblock %}
 
 {% block navbar %}
@@ -48,9 +46,7 @@
 
 
             <ul class="nav navbar-nav navbar-right">
-                <!--<ul class="nav navbar-nav navbar-right">-->
                 {% if current_user.is_authenticated and not current_user.is_anonymous %}
-
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
                            aria-expanded="false"><i class="fa fa-history" aria-hidden="true"></i><span
@@ -74,8 +70,6 @@
                             {% endfor %}
                         </ul>
                     </li>
-                {% else %}
-                    Something
                 {% endif %}
                 {% if current_user.is_authenticated and not current_user.is_anonymous %}
                     <li class="dropdown">
@@ -100,7 +94,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="container">
+    <div class="container-fluid no-pad">
         {% for message in get_flashed_messages() %}
             <div class="alert alert-warning">
                 <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -119,7 +113,8 @@
     {{ moment.include_moment() }}
 
     <!--<script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.js"></script>-->
-    <script type="text/javascript" src="{{ url_for('static', filename='js.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/js.js') }}"></script>
+     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery.swap.js') }}"></script>
     <script type=text/javascript>
         $SCRIPT_ROOT = {{ request.script_root|tojson|safe }};
     </script>

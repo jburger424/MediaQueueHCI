@@ -6,11 +6,13 @@
 {% block page_content %}
 
 
-    <div class="col-lg-8">
-
-        <div id="iframe-container">
-                    <div id="player"></div>
+    <div class="col-lg-8 col-xs-12">
+        <div class="hidden-sm">
+            <div id="iframe-container">
+                <div id="player"></div>
+            </div>
         </div>
+
 
         <script>
             // 2. This code loads the IFrame Player API code asynchronously.
@@ -32,7 +34,9 @@
 
     </div><!-- /.col-lg-8 -->
 
-    <div class="col-lg-4 session_info">
+    <div class="col-lg-4 col-xs-12 col-sm-12 session_info">
+
+    <div class="close-right to-close hidden-sm hidden-xs">&gt;&gt;&gt;</div>
         <ul id="now_playing" class="list-group">
             <b>Now Playing</b>
             {% if playable_playing is defined and playable_playing is not none %}
@@ -44,6 +48,8 @@
                             &#x25BC;
                         </span>
                     <img src='{{ playable_playing.thumb_url }}' class='img-rounded' width='60' height='45'>
+
+                    <div class="next"><i class="fa fa-step-forward" aria-hidden="true"></i></div>
                     <span class="title">{{ playable_playing.name }}</span>
                     <span class="score label label-default label-pill pull-xs-right">{{ playable_playing.score }}</span>
 
@@ -51,7 +57,7 @@
                 </li>
             {% endif %}
         </ul>
-        <ul id="playables" class="list-group">
+        <ul id="unplayed" class="list-group">
             <b>Up Next</b>
             {% for playable in playables_unplayed %}
                 <li class="clearfix list-group-item" data-url="{{ playable.url }}">
@@ -62,6 +68,9 @@
                             &#x25BC;
                         </span>
                     <img src='{{ playable.thumb_url }}' class='img-rounded' width='60' height='45'>
+
+                    <div class="next"></div>
+                    <div class="next"><i class="fa fa-step-forward" aria-hidden="true"></i></div>
                     <span class="title">{{ playable.name }}</span>
                     <span class="score label label-default label-pill pull-xs-right">{{ playable.score }}</span>
 
@@ -74,13 +83,62 @@
     <div class="search_modal modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
-                <ul class="row-fluid" id="search_results">
-                    <li>
-                        <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
-                        <span>Title</span>
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">Modal Header</h2>
+                </div>
+                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel" data-wrap="false" data-interval="false">
 
-                    </li>
-                </ul>
+
+                    <!-- Wrapper for slides -->
+                    <div class="carousel-inner" role="listbox">
+                            <ul class="search_results item active" id="0">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results item" id="1">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results row item" id="2">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results row item" id="3">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                <span>Title</span>
+
+                            </li>
+                        </ul>
+                        <ul class="search_results row item" id="4">
+                            <li>
+                                <img src="https://i.ytimg.com/vi/igNVdlXhKcI/default.jpg" width=120 height=90/>
+                                 <span>Title</span>
+
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
