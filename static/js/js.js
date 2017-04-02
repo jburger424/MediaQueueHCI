@@ -1,12 +1,112 @@
-jQuery(function ($) { // First argument is the jQuery object
-        //var vWidth = $(".add-link.input-group").width();
-        //var vHeight = vWidth * (9 / 16);
+jQuery(function ($) {
+
         var startedPlaying = false;
         var playerReady = false;
+        var iframe = $("iframe");
+        var navbar = $("nav.navbar");
+        var closeRight = $(".close-right");
+        var playablesList = $("ul#unplayed li");
+
+
+        var origIframeWidth;
+        var origIframeHeight;
         var currentPlaying;
+
+        closeRight.click(function () {
+            if ($(this).hasClass("to-close"))
+                growVideo();
+            else
+                shrinkVideo();
+        });
+
+        var growVideo = function () {
+            var newWidth = $(".container-fluid").width();
+            var newHeight = $(window).innerHeight() - $("#url_form").outerHeight(true);
+            var colHeight = $(window).innerHeight();
+            var navHeight = -1 * (navbar.outerHeight(true));
+            $("iframe,#iframe-container")
+                .animate(
+                    {
+                        width: newWidth,
+                        height: newHeight
+                    },
+                    {
+                        duration: 800,
+                        queue: false,
+                        step: function (now) {
+                            $(this).attr("width", now);
+                            $(this).attr("height", now);
+                        }
+                    });
+            $(".col-lg-8").animate({
+                width: newWidth + "px",
+                height: colHeight + "px"
+            }, {duration: 800, queue: false});
+
+            navbar.animate({
+                marginTop: navHeight + "px"
+            }, {duration: 800, queue: false});
+
+            $(".session_info").animate({
+                right: "-" + $(".session_info").width() + "px"
+            }, {
+                duration: 800,
+                queue: false,
+                done: function () {
+                    console.log("ho");
+                    closeRight.removeClass("to-close");
+                    closeRight.addClass("to-open");
+                    closeRight.text("<<<");
+                }
+            });
+
+
+        };
+
+        var shrinkVideo = function () {
+            var newWidth = origIframeWidth;
+            var newHeight = origIframeHeight;
+            var colHeight = newHeight + $("#url_form").outerHeight(true);
+            $("iframe,#iframe-container").animate(
+                {
+                    width: newWidth,
+                    height: newHeight
+                },
+                {
+                    duration: 800,
+                    queue: false,
+                    step: function (now) {
+                        $(this).attr("width", now);
+                        $(this).attr("height", now);
+                    }
+                });
+            $(".col-lg-8").animate({
+                width: newWidth + "px",
+                height: colHeight + "px"
+            }, {duration: 800, queue: false});
+            navbar.animate({
+                marginTop: "0px"
+            }, {duration: 800, queue: false});
+            $(".session_info").animate({
+                right: "0px"
+            }, {
+                duration: 800,
+                queue: false,
+                done: function () {
+                    console.log("hi");
+                    closeRight.removeClass("to-open");
+                    closeRight.addClass("to-close");
+                    closeRight.text(">>>");
+                }
+            });
+
+
+        };
+
         $.ajaxSetup({cache: false});
 
         function updatePlayableState(playable_url, state) {
+            console.log("update playable state: "+playable_url+" "+state);
             $.ajax({
                 type: "POST",
                 contentType: "application/json; charset=utf-8",
@@ -42,6 +142,7 @@ jQuery(function ($) { // First argument is the jQuery object
         }
 
         function setVideo(url) {
+            console.log("set video: "+url);
             if (findBootstrapEnvironment() == "lg") {
                 player.cueVideoById({
                     'videoId': url,
@@ -90,10 +191,10 @@ jQuery(function ($) { // First argument is the jQuery object
             $("ul.search_results#" + page_id).append(toAppend);
             if (page_id == 0)
                 $('.search_modal.modal.fade').modal('show');
-            if (page_id < 5){
-                getQueryData(query,next_page_token,page_id+1);
+            if (page_id < 5) {
+                getQueryData(query, next_page_token, page_id + 1);
             }
-            else{
+            else {
                 return;
                 console.log("DONE!");
             }
@@ -105,7 +206,7 @@ jQuery(function ($) { // First argument is the jQuery object
             $(".search_results").removeClass("active");
             $(".search_results").first().addClass("active");
             var empty = "";
-            getQueryData(query,empty,0);
+            getQueryData(query, empty, 0);
         }
 
         $('#url_form').submit(function (event) {
@@ -147,17 +248,19 @@ jQuery(function ($) { // First argument is the jQuery object
             var player;
             var vWidth = $(".add-link.input-group").width();
             var vHeight = vWidth * (9 / 16);
+            origIframeWidth = vWidth;
+            origIframeHeight = vHeight;
             //$(".add-link").css("top",vHeight);
             $("#iframe-container").css({
                 width: vWidth,
                 height: vHeight
+                //opacity:.5
             });
             window.onYouTubePlayerAPIReady = function () {
-                console.log("something working");
                 player = new YT.Player('player', {
                     height: vHeight,
                     width: vWidth,
-                    videoId: 'g4mHPeMGTJM',
+                    videoId: 'NULL',
                     events: {
                         'onReady': onPlayerReady,
                         'onStateChange': onPlayerStateChange
@@ -170,10 +273,6 @@ jQuery(function ($) { // First argument is the jQuery object
                 playerReady = true;
                 event.target.playVideo();
                 console.log("player ready");
-                /*if ($("#playables li").length > 0) {
-                 startedPlaying = true;
-                 }*/
-                //goToNext()
 
             }
 
@@ -197,16 +296,15 @@ jQuery(function ($) { // First argument is the jQuery object
 
             //start queue code
             function goToNext() {
-                console.log("go to next");
                 //if no items on either list or player isn't ready keep trying
-                if ($("#playables li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
+                if ($("#unplayed li").length == 0 || !playerReady) { //was  && $("#now_playing li").length == 0) also
                     setTimeout(goToNext, 500);
                 }
                 else {
                     player.playVideo();
-                    if (startedPlaying && $("#playables li").length > 0) {
+                    /*if (startedPlaying && $("#unplayed li").length > 0) {
                         $('#history').append($("ul#now_playing li:first"));
-                        $('#now_playing').append($('#playables li:first'));
+                        $('#now_playing').append($('#unplayed li:first'));
                     }
 
                     var vid_id = $("ul#now_playing li:first").attr("data-url");
@@ -216,7 +314,8 @@ jQuery(function ($) { // First argument is the jQuery object
                         'videoId': vid_id,
                         'suggestedQuality': 'large'
                     });
-                    updatePlayableState(vid_id, "playing");
+                    updatePlayableState(vid_id, "playing");*/
+                    setVideo(vid_id);
                 }
 
             }
@@ -226,9 +325,9 @@ jQuery(function ($) { // First argument is the jQuery object
             console.log("else");
         }
 
-        $("ul#playables").on('click', 'li span.upvote,li span.downvote', function () {
+        $("ul#unplayed").on('click', 'li span.upvote,li span.downvote', function () {
             console.log("VOTE!");
-            //$('#playables li.list-group-item .upvote, #playables li.list-group-item .downvote').click(function () {
+            //$('#unplayed li.list-group-item .upvote, #unplayed li.list-group-item .downvote').click(function () {
             var url = $(this).parent("li").attr("data-url");
             var voteVal = $(this).hasClass("upvote") ? 1 : -1;
             if ($(this).hasClass("clicked")) {
@@ -254,16 +353,17 @@ jQuery(function ($) { // First argument is the jQuery object
             console.log("this: ");
             console.log($(this));
             //update();
-            if ($("#playables li").length > 1)
+            if ($("#unplayed li").length > 1)
                 sort($(this).parent());
         });
 
         function update() {
             if (playerReady) {
                 currentPlaying = player.getVideoUrl();
-                if (currentPlaying != undefined)
+                if (currentPlaying != undefined && currentPlaying.length > 30){
+                    $("div#iframe-container").addClass("visible");
                     currentPlaying = currentPlaying.substring(currentPlaying.search("v=") + 2, currentPlaying.length);
-
+                }
             }
             $.ajax({
                 type: "GET",
@@ -271,75 +371,61 @@ jQuery(function ($) { // First argument is the jQuery object
                 dataType: "json", // Set the data type so jQuery can parse it for you
                 success: function (data) {
                     var users = data['users'];
-                    var playables = data['playables'];
-                    for (var i in playables) {
-                        var url = playables[i]['url'];
-                        var score = playables[i]['score'];
-                        var state = playables[i]['state'];
+                    var playing = data['playing'];
+                    var unplayed = data['unplayed'];
+                    var played = data['played'];
 
-                        //sees if this url already exists in list
-                        var listItem = $("li.list-group-item[data-url='" + url + "']");
-                        if (!listItem.length) {
-                            //doesn't exist yet
-                            var appendTo = $("#playables");
-                            if (state == "playing") {
-                                appendTo = $("#now_playing");
-                                if (!startedPlaying) {
-                                    setVideo(url);
-                                }
+                    //first update all unplayed
+                    $('#unplayed li').remove();
+                    //TODO loading icon here
+                    //TODO case when no videos playing
+                    //TODO change id playables to unplayed
+                        for(var i in unplayed){
+                            playable = unplayed[i];
+                            html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
+                            $('#unplayed').append(html_text);
+                            listItem = $('#unplayed').last()
+                            if (playable['user_vote'] > 0) {
+                                $(listItem).find(".upvote").addClass("clicked")
                             }
-                            else if (state == "played")
-                                appendTo = $("#history");
-                            $(appendTo).append("<li class='clearfix list-group-item' data-url='" +
-                                playables[i]['url'] + "'>" +
-                                "<span class='upvote'>&#x25B2;</span>" +
-                                "<span class='downvote'>&#x25BC;</span>" +
-                                "<img src='" + playables[i]['thumb_url'] + "' class='img-rounded' width='60' height='45'>" +
-                                "<div class='next'><i class='fa fa-step-forward' aria-hidden='true'></i></div><span class='title'>" + playables[i]['name'] + "</span>" +
-                                "<span class='score label label-default label-pill pull-xs-right'>" + (playables[i]['score']).toString() + "</span>" +
-                                "</li>"
-                            );
-                        }
-                        //if it already exists, update the score, check that it's in the right place
-                        else {
-                            listItem.find(".score").text(score);
-                            if (state == "playing" && listItem.parent().is("#playables")) { //shoud be playing but in playables
-                                if (currentPlaying != url) { //if player is playing something else
-                                    //load new video
-                                    setVideo(url);
-                                    //move old li to history
-                                    $("#history").append($("#now_playing li"));
-                                    //move this to now_playing
-                                    $("#now_playing").append(listItem);
-                                    //play
-                                    //update state of other
-                                    updatePlayableState(currentPlaying, "played");
-                                    currentPlaying = url;
-                                }
-                                else if ($("#now_playing li").first().attr("data-url") != url) { //if it is playing right vid
-                                    $("#history").append($("#now_playing li")); //if something's playing move it to history
-                                    $("#now_playing").append(listItem);
-                                }
-                                else if ($("#now_playing li").length == 0) {
-                                    $("#now_playing").append(listItem);
-                                }
-                                currentPlaying = url;
-                            }
-                            if (state == "played" && (listItem.parent().is("#playables") || listItem.parent().is("#now_playing"))) {
-                                $("#history").append(listItem);
-                                console.log("condition 2!!!");
+                            else if (playable['user_vote'] < 0) {
+                                $(listItem).find(".downvote").addClass("clicked")
                             }
                         }
-                        $(listItem).children(".clicked").removeClass("clicked");
-                        if (playables[i]['user_vote'] > 0) {
-                            $(listItem).find(".upvote").addClass("clicked")
-                        }
-                        else if (playables[i]['user_vote'] < 0) {
-                            $(listItem).find(".downvote").addClass("clicked")
-                        }
-                        sort(listItem);
-                        console.log("Adding: " + playables[i]['name'] + " with score" + playables[i]['score']);
+                    //only if need be update now_playing and played
+                    //new video must be loaded
+
+                    if(playing.length == 0 && unplayed.length == 0){
+                        $("div#iframe-container").removeClass("visible");
+                        currentPlaying = null;
+                        player.stopVideo();
                     }
+                    else if(playing[0]['url'] != currentPlaying){
+                        console.log("video changed");
+                        //load new video
+                        currentPlaying = playing.length > 0 ? playing[0]['url'] : "null";
+                        setVideo(currentPlaying);
+                        //move old li to history
+                        $("#history li").remove();
+                        for(var i in played){
+                            playable = played[i];
+                            html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
+                            $('#history').append(html_text);
+                        }
+                        $("#now_playing li").remove();
+                        //TODO for loop probably not neccesary
+                        for(var i in playing){
+                            playable = playing[i];
+                            html_text = genPlayableHTML(playable['name'],playable['url'],playable['thumb_url'],playable['score']);
+                            $('#now_playing').append(html_text);
+                        }
+                        //play
+                        //update state of other
+                        //TODO is this neccesary?
+                        //updatePlayableState(currentPlaying, "played");
+                    }
+
+
                     for (var j in users) {
                         var name = users[j]['Name'];
                         if ($("#users li:contains(" + name + ")").length == 0) {
@@ -376,10 +462,11 @@ jQuery(function ($) { // First argument is the jQuery object
 
         $("ul#now_playing").on('click', 'li div.next', function () {
             console.log("click");
-            if ($("#playables li").length > 0) {
-                setVideo($("#playables li:first-of-type").attr("data-url"));
+            /*if ($("#unplayed li").length > 0) {
+                setVideo($("#unplayed li:first-of-type").attr("data-url"));
 
-            }
+            }*/
+            updatePlayableState($("#now_playing li:first-of-type").attr("data-url"),'played')
         });
         //update every second
         var doUpdate = function () {
@@ -411,97 +498,28 @@ jQuery(function ($) { // First argument is the jQuery object
          sort($(allItems[numItems-i+1]));
          }*/
 
-        /*$("ul#playables").on("click", "li", function () {
+        /*$("ul#unplayed").on("click", "li", function () {
          console.log('clicked');
          sort($(this));
          });*/
 
         $("button#sub_new_score").click(function () {
             var newItem = $("ul").append("<li><span class='score'>" + $("input#new_score").val() + "</span></li>");
-            newItem.ready(sort($(this)));
+            //newItem.ready(sort($(this)));
         });
 
-        function sort(thisObj) {
-            if ($("ul#playables li").length < 2)
-                return;
-            var clicked = thisObj;
-            var clickedScore = parseInt($(clicked).find(".score").text(), 10);
-            console.log("Clicked Score:  " + clickedScore);
-            // all the LIs above the clicked one
-            var previousAll = clicked.prevAll();
-
-            // only proceed if it's not already on top (no previous siblings)
-            // top LI
-
-            //this is doing for each from bottom to top except for selected
-            var top;
-            var topScore = parseInt($("ul#playables li").first().find(".score").text(), 10);
-            var bottomScore = parseInt($("ul#playables li").last().find(".score").text(), 10);
-            if (clickedScore > topScore) {
-                top = $("ul#playables li").first();
-            }
-            else if (clickedScore < bottomScore) {
-                top = clicked;
-                clicked = $("ul#playables li").last();
-            }
-            else {
-
-                $("li").not(clicked.add(clicked.prev())).each(function () {
-                    var thisScore = parseInt($(this).find(".score").text(), 10);
-                    var nextScore = parseInt($(this).next().find(".score").text(), 10);
-                    //console.log(thisScore, nextScore);
-                    //was or equal to
-                    if (nextScore < clickedScore && thisScore >= clickedScore && $(this) != clicked) {
-                        // console.log("Move score " + clickedScore + " to before " + $(this).next().text());
-                        top = $(this).next().length ? $(this).next() : top;
-                    }
-                    else {
-                        //#console.log("Not Match: \n \tClicked Score: " + clickedScore + "\n\tThis Score: " + thisScore + "\n\tNext Score: " + nextScore + "\n\n")
-                    }
-                });
-
-
-            }
-
-            if (typeof top == 'undefined') {
-                console.log("No Swap Necessary");
-            }
-            else {
-                previousAll = top.index() < clicked.index() ? clicked.prevUntil(top.prev()) : previousAll = clicked.nextUntil(top);
-                var previous = $(previousAll[0]);
-
-                //if moving item up
-                var moveUp = top.index() < clicked.index() ? clicked.offset().top - top.offset().top : (top.offset().top - clicked.offset().top - clicked.outerHeight()) * -1;
-                var moveDown = (clicked.offset().top + clicked.outerHeight()) - (previous.offset().top + previous.outerHeight());
-
-
-                console.log("Move Up: " + moveUp);
-                console.log("Move Down: " + moveDown);
-                // let's move stuff
-                clicked.css('position', 'relative');
-                previousAll.css('position', 'relative');
-                clicked.animate({
-                    'top': -moveUp
-                });
-                previousAll.animate({
-                    'top': moveDown
-                }, {
-                    complete: function () {
-                        clicked.insertBefore(top);
-                        clicked.css({
-                            'position': 'static',
-                            'top': 0
-                        });
-                        previousAll.css({
-                            'position': 'static',
-                            'top': 0
-                        });
-                    }
-                });
-            }
+        function genPlayableHTML(title, url, thumb_url, score){
+            text = "<li class='clearfix list-group-item' data-url='" +
+                                url + "'>" +
+                                "<span class='upvote'>&#x25B2;</span>" +
+                                "<span class='downvote'>&#x25BC;</span>" +
+                                "<img src='" + thumb_url + "' class='img-rounded' width='60' height='45'>" +
+                                "<div class='next'><i class='fa fa-step-forward' aria-hidden='true'></i></div><span class='title'>" + title + "</span>" +
+                                "<span class='score label label-default label-pill pull-xs-right'>" + score.toString() + "</span>" +
+                                "</li>";
+            return text;
         }
 
         /*end*/
-    }
-);
+    });
 
