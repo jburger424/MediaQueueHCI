@@ -17,7 +17,6 @@ from wtforms import StringField, SubmitField
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager, UserMixin, AnonymousUserMixin, login_required, login_user, logout_user, \
     current_user
-from flask_qrcode import QRcode
 
 # TODO: Make seperate distinct pages for create station join station
 # TODO: URL/Query switching button on input bar
@@ -40,7 +39,6 @@ manager = Manager(app)
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
-qrcode = QRcode(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)

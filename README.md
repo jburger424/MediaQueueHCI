@@ -1,10 +1,23 @@
-New Commit #2
-This line added by test branch
-This line added by testBranch2
-Flasky - Yo
-======
+## Description
 
-This repository contains the source code examples for my O'Reilly book [Flask Web Development](http://www.flaskbook.com).
+Collaborative video queue where multiple users will add and vote on different Youtube videos to be
+played from a single computer. Built with Flask framework using AJAX and SQLite.
 
-The commits and tags in this repository were carefully created to match the sequence in which concepts are presented in the book. Please read the section titled "How to Work with the Example Code" in the book's preface for instructions.
+### [Demo]()
 
+## Getting Started
+### Requirements (Included in virtual enviroment)
+- Python 2.7
+- pip packages in requirements.txt
+
+### Running
+- Activate virtual enviroment in bash (No requirements needed when running from virual enviroment)
+    - `source m-q-env/bin/active`
+- Start app
+    - `python flaskapp.py runserver`
+
+### Stopping
+- End program
+    - `Contol-C` from keyboard in bash window
+- Deactivate virtual enviroment
+    - `Deactivate`
