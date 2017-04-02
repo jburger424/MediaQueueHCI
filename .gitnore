@@ -6,6 +6,8 @@ env
 env*
 dist
 build
+access.log
+my.patch
 *.egg
 *.egg-info
 _mailinglist
@@ -17,3 +19,8 @@ htmlcov
 *,cover
 hidden/
 m-q-env
+_keys.py
+.idea/
+.idea
+.idea/*
+__pycache__/
